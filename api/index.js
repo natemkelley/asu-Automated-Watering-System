@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 
 app.get('/', (req, res, next) => {
-  res.send('API root')
+  res.json({status:true})
 })
 
 app.get('/random-movie', async (req, res, next) => {

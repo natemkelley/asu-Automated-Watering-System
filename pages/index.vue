@@ -1,52 +1,72 @@
 <template>
-  <section class="container">
-      <div class="movie" v-if="movie">
-        <img :src="movie.Poster">
-        <h1>{{movie.Title}}</h1>
-        <h3>{{movie.Year}}</h3>
-        <button @click="getRandomMovie">Get Random Movie</button>
-      </div>
-  </section>
+  <v-app>
+    <MySidebar></MySidebar>
+    <TopBar></TopBar>
+
+    <v-content>
+      <v-container fluid>
+        <v-row
+          align="center"
+          justify="center"
+        >
+          <v-col cols="7">
+            <v-card>
+              <v-card-actions>
+                <div class="flex-grow-1"></div>
+                <v-btn text>Cancel</v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                >Submit</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+          <v-col cols="4">
+            <v-card>
+              <v-card-actions>
+                <div class="flex-grow-1"></div>
+                <v-btn text>Cancel</v-btn>
+                <v-btn
+                  text
+                  color="primary"
+                >Submit</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-content>
+
+    <MyFooter></MyFooter>
+  </v-app>
 </template>
 
 <script>
 import axios from 'axios'
+import MyFooter from '@/components/Footer'
+import MySidebar from '@/components/Sidebar'
+import TopBar from '@/components/TopBar'
+
 export default {
+  components: {
+    MyFooter,
+    MySidebar,
+    TopBar
+  },
   asyncData({ params }) {
     return axios.get(`http://localhost:3000/api/random-movie`).then(res => {
       //console.log(res.data)
-      return { movie: res.data }
     })
   },
   methods: {
+    
     getRandomMovie() {
-      axios.get(`api/random-movie`).then(res => {
-        console.log(res.data)
-        this.movie = res.data
-      })
+
     }
   }
 }
 </script>
 
 <style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-family: sans-serif;
-}
-.movie img {
-  width: 300px;
-  height: 445px;
-}
-.movie h1 {
-  margin-top: 5px;
-}
-.movie button {
-  margin-top: 15px;
-  cursor: pointer;
-}
+
 </style>
