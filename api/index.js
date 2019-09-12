@@ -11,7 +11,6 @@ app.get('/random-movie', async (req, res, next) => {
       'tt3896198',
       'tt0071253',
       'tt0000111',
-      'tt3774312'
     ]
     var movieID = 'tt' + Math.round(Math.random() * 9999999)
     var movie = await axios.get(
