@@ -1,8 +1,5 @@
 <template>
-<v-card
-    class="mx-auto"
-    color="#F9F9F9"
-  >
+<v-card>
     <v-list-item two-line>
       <v-list-item-content>
         <v-list-item-title class="headline">San Francisco</v-list-item-title>
