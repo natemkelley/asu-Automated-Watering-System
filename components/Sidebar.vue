@@ -1,7 +1,8 @@
 <template>
     <v-navigation-drawer
+      v-model="drawer"
       :floating="false"
-      permanent="permanent"
+      overflow
       app
     >
         <v-list>
@@ -32,9 +33,20 @@
 </template>
 
 <script>
-
     export default {
         name:'Sidebar',
+        computed: {
+            drawer:{
+                get() {
+                    console.log('get',this.$store.state.model)
+                    return this.$store.state.model; 
+                },
+                set(state) {
+                    console.log('set',state)
+                    this.$store.commit('toggleNav',state)
+                },
+            }
+        },
         data () {
             return {
                 items: [
@@ -42,6 +54,7 @@
                 { title: 'Account', icon: 'account' },
                 { title: 'Admin', icon: 'gavel' },
                 ],
+                storeModel: null
             }
         },
     }
