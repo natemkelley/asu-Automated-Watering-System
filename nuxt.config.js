@@ -5,7 +5,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'Automated Watering System' || '',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -28,14 +28,16 @@ module.exports = {
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [
-  ],
+  plugins: [],
   /*
   ** Nuxt.js dev-modules
   */
   buildModules: [
     '@nuxtjs/vuetify'
   ],
+  vuetify: {
+    optionsPath: '@/plugins/vuetify.options.js'
+  },
   /*
   ** Nuxt.js modules
   */
