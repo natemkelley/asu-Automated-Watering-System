@@ -38,11 +38,9 @@
         computed: {
             drawer:{
                 get() {
-                    console.log('get',this.$store.state.model)
                     return this.$store.state.model; 
                 },
                 set(state) {
-                    console.log('set',state)
                     this.$store.commit('toggleNav',state)
                 },
             }
