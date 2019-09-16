@@ -8,7 +8,6 @@ export const mutations = {
       state.counter++
     },
     toggleNav(state, val){
-      console.log(state, val)
       if(val){
         return
       }

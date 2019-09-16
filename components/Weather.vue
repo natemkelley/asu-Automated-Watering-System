@@ -54,7 +54,7 @@ export default {
     }
   },
   mounted() {
-    return axios.get(`http://localhost:3000/api/weather`).then(res => {
+    axios.get(`http://localhost:3000/api/weather`).then(res => {
       console.log(res.data)
       this.weatherData = res.data;
     });
