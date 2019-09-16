@@ -57,11 +57,6 @@ export default {
     Weather,
     RecentUpdates
   },
-  asyncData({ params }) {
-    return axios.get(`http://localhost:3000/api/random-movie`).then(res => {
-      //console.log(res.data)
-    });
-  },
   methods: {
     getRandomMovie() {}
   }

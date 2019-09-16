@@ -14,7 +14,7 @@ import axios from 'axios'
 export default {
   asyncData({ params }) {
     return axios.get(`http://localhost:3000/api/random-movie`).then(res => {
-      //console.log(res.data)
+      console.log(res.data)
       return { movie: res.data }
     })
   },

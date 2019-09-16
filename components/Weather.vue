@@ -20,7 +20,8 @@
 
 <script>
 import DraggableWeatherChart from "@/components/weather/DraggableWeatherChart";
-import colors from 'vuetify/es5/util/colors'
+import colors from "vuetify/es5/util/colors";
+import axios from 'axios'
 
 export default {
   name: "Weather",
@@ -28,8 +29,9 @@ export default {
   data() {
     return {
       tab: null,
-      tabs: ['Temperature','Rain','Likelihood','Humidity','Sun'],
-      chartData: {}
+      tabs: ["Temperature", "Rain", "Likelihood", "Humidity", "Sun"],
+      chartData: {},
+      weatherData: null
     };
   },
   methods: {
@@ -52,12 +54,16 @@ export default {
     }
   },
   mounted() {
+    return axios.get(`http://localhost:3000/api/weather`).then(res => {
+      console.log(res.data)
+      this.weatherData = res.data;
+    });
     setInterval(this.generateData, 5000);
   },
-  computed:{
-    color(){
-      return colors.deepPurple.accent4
+  computed: {
+    color() {
+      return colors.deepPurple.accent4;
     }
-  }
+  },
 };
 </script>
