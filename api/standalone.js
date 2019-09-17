@@ -3,10 +3,7 @@ const app = express();
 const axios = require("axios");
 const localStorage = require("../server/localStorage.js");
 const moment = require('moment')
-const bodyParser = require('body-parser')
-
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+var port = process.env.PORT || 8080;
 
 app.get("/", (req, res, next) => {
   res.json({ status: true });
@@ -61,8 +58,8 @@ app.get("/weather", async (req, res, next) => {
 });
 
 app.post("/weather-settings", async (req, res, next) => {
-  console.log('----',req.query, req.body);
-  localStorage.saveLocalStorage(req.body.query, req.body.value);
+  console.log('----',req.query.query);
+  localStorage.saveLocalStorage(req.query.query, req.query.value);
   res.json({status:true, results: localStorage.getLocalStorage(req.query.query)});
 });
 
@@ -92,3 +89,6 @@ module.exports = {
   path: "/api",
   handler: app
 };
+
+app.listen(port);
+console.log('Server started! At http://localhost:' + port);

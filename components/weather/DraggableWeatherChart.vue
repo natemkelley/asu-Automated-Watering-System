@@ -11,34 +11,36 @@
         :track-fill-color="color"
         :thumb-color="color"
         height="220px"
-        thumb-label
+        thumb-label="always"
         :max="maxTemp"
         :min="minTemp"
         v-model="sliderValue"
         vertical
         style="position: relative; height:220px; width:10%"
       ></v-slider>
-      <BarChartWithAnnotation
+      <LineChartWithAnnotation
         style="position: relative; height:220px; width:80%"
         :chart-data="chartData"
         :options="options"
-      ></BarChartWithAnnotation>
+      ></LineChartWithAnnotation>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import BarChartWithAnnotation from "@/components/weather/BarChartWithAnnotation";
+import LineChartWithAnnotation from "@/components/weather/LineChartWithAnnotation";
+import axios from "axios";
 
 export default {
-  components: { BarChartWithAnnotation },
+  components: { LineChartWithAnnotation },
   props: ["chartData", "color"],
   data() {
     return {
       maxTemp: 115,
       minTemp: 50,
       sliderValue: 75,
-      loading: true
+      loading: true,
+      saving: false
     };
   },
   computed: {
@@ -58,13 +60,50 @@ export default {
             }
           ],
           drawTime: "afterDraw"
+        },
+        tooltips: {
+          mode: "index",
+          intersect: true
         }
       };
     }
   },
   watch: {
     chartData() {
+      this.loading = false;
+    },
+    sliderValue() {
+      this.saveValue(this.sliderValue);
+    }
+  },
+  mounted() {
+    if (this.chartData) {
+      setTimeout(() => {
         this.loading = false;
+      }, 450);
+    }
+  },
+  methods: {
+    saveValue(value) {
+      console.log(value);
+      this.saveVal = value;
+      if (!this.saving) {
+        this.saving = true;
+        setTimeout(() => {
+          axios
+            .post(
+              "/api/weather-settings",
+              `query=temperature&value=${this.saveVal}`
+            )
+            .then(response => {
+              this.saving = false;
+              console.log(response.data);
+            })
+            .catch(error => {
+              this.saving = false;
+            });
+        }, 500);
+      }
     }
   }
 };

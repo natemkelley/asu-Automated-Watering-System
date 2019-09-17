@@ -1,15 +1,19 @@
 var LocalStorage = require("node-localstorage").LocalStorage;
 localStorage = new LocalStorage("./scratch");
 
+localStorage.setItem('myFirstKey', 'myFirstValue');
+console.log(localStorage.getItem('myFirstKey'));
+
 exports.saveLocalStorage = function(objectName, data) {
+  console.log('save', objectName, data)
+
   if (!objectName) {
     return { error: "No object name" };
   }
   if (!data) {
     return { error: "No data" };
   }
-
-  localStorage.setItem(objectName, data);
+  localStorage.setItem(String(objectName), String(data));
   return localStorage.getItem(objectName);
 };
 
@@ -17,8 +21,8 @@ exports.getLocalStorage = function(objectName) {
   if (!objectName) {
     return allStorage();
   }
-
-  return localStorage.getItem(objectName);
+  console.log('get', objectName)
+  return localStorage.getItem(String(objectName));
 };
 
 function allStorage() {

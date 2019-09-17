@@ -8,8 +8,13 @@
       :vertical="true"
     >
       <v-tabs-slider></v-tabs-slider>
-      <v-tab v-for="(tab,i) in tabs" :key="tab" :href="`#tab-${tab}`">{{ tab }}</v-tab>
-      <v-tab-item v-for="tab in tabs" :key="tab" :value="'tab-' + tab">
+      <v-tab
+        v-for="(tab,i) in tabs"
+        :key="i"
+        :href="`#tab-${i}`"
+        @click="updateChart(tab)"
+      >{{ tab }}</v-tab>
+      <v-tab-item v-for="(tab,i) in tabs" :key="i" :value="'tab-' + i">
         <v-card flat tile height="245px">
           <DraggableWeatherChart :color="color" :chartData="chartData"></DraggableWeatherChart>
         </v-card>
@@ -21,7 +26,8 @@
 <script>
 import DraggableWeatherChart from "@/components/weather/DraggableWeatherChart";
 import colors from "vuetify/es5/util/colors";
-import axios from 'axios'
+import axios from "axios";
+import moment from "moment";
 
 export default {
   name: "Weather",
@@ -29,41 +35,65 @@ export default {
   data() {
     return {
       tab: null,
-      tabs: ["Temperature", "Rain", "Likelihood", "Humidity", "Sun"],
+      tabs: ["Temperature", "Rain", "Clouds", "Humidity", "Sun"],
       chartData: {},
       weatherData: null
     };
   },
   methods: {
-    generateData() {
-      let newArray = [];
-      for (let i = 0; i < 10; i++) {
-        let randomValue = Math.floor(Math.random() * 80) + 32;
-        newArray.push(randomValue);
-      }
-      this.chartData = {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [
-          {
-            label: "Data One",
-            backgroundColor: colors.deepPurple.accent4,
-            data: newArray
+    createLabels(data) {
+      return data.map(element => moment(element.date).format("l"));
+    },
+    createHighs(data) {
+      return data.map(element => element.maxTemp);
+    },
+    createLows(data) {
+      return data.map(element => element.minTemp);
+    },
+    updateChart(label) {
+      console.log(label);
+      axios
+        .get("/api/weather-settings", {
+          params: {
+            query: "temperature"
           }
-        ]
-      };
+        })
+        .then(function(response) {
+          console.log(response.data);
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
   },
   mounted() {
     axios.get(`http://localhost:3000/api/weather`).then(res => {
-      console.log(res.data)
-      this.weatherData = res.data;
+      console.log(res.data);
+      this.chartData = {
+        labels: this.createLabels(res.data),
+        datasets: [
+          {
+            label: "Highs",
+            backgroundColor: colors.red.accent4 + "1d",
+            borderColor: colors.red.accent4,
+            data: this.createHighs(res.data),
+            fill: true
+          },
+          {
+            label: "Lows",
+            backgroundColor: colors.blue.accent4 + "1d",
+            borderColor: colors.blue.accent4,
+            data: this.createLows(res.data),
+            fill: true
+          }
+        ]
+      };
     });
-    setInterval(this.generateData, 5000);
   },
   computed: {
     color() {
       return colors.deepPurple.accent4;
     }
-  },
+  }
 };
 </script>
