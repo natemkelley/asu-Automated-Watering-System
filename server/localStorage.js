@@ -1,12 +1,15 @@
 var LocalStorage = require("node-localstorage").LocalStorage;
 localStorage = new LocalStorage("./scratch");
 
-localStorage.setItem('myFirstKey', 'myFirstValue');
-console.log(localStorage.getItem('myFirstKey'));
+localStorage.setItem("temperature", "50");
+localStorage.setItem("humidity", "0");
+localStorage.setItem("sun", "true");
+localStorage.setItem("Clouds", "50");
+localStorage.setItem("rain", "20");
+localStorage.setItem("moisture-sensors", "50");
+localStorage.setItem("recent-updates", String([{}]));
 
 exports.saveLocalStorage = function(objectName, data) {
-  console.log('save', objectName, data)
-
   if (!objectName) {
     return { error: "No object name" };
   }
@@ -21,18 +24,22 @@ exports.getLocalStorage = function(objectName) {
   if (!objectName) {
     return allStorage();
   }
-  console.log('get', objectName)
-  return localStorage.getItem(String(objectName));
+  return {
+    value: localStorage.getItem(String(objectName)),
+    objectName: objectName
+  };
 };
 
 function allStorage() {
-    var archive = {}, // Notice change here
-        keys = Object.keys(localStorage),
-        i = keys.length;
+  var archive = [], // Notice change here
+    i = localStorage.length;
 
-    while ( i-- ) {
-        archive[ keys[i] ] = localStorage.getItem( keys[i] );
-    }
+  while (i--) {
+    archive.push({
+      objectName: localStorage.key(i),
+      value: localStorage.getItem(localStorage.key(i))
+    });
+  }
 
-    return archive;
+  return archive;
 }

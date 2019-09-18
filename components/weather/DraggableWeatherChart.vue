@@ -33,7 +33,7 @@ import axios from "axios";
 
 export default {
   components: { LineChartWithAnnotation },
-  props: ["chartData", "color"],
+  props: ["chartData", "color", "tab"],
   data() {
     return {
       maxTemp: 115,

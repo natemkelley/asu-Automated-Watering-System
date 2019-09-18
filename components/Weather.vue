@@ -16,7 +16,36 @@
       >{{ tab }}</v-tab>
       <v-tab-item v-for="(tab,i) in tabs" :key="i" :value="'tab-' + i">
         <v-card flat tile height="245px">
-          <DraggableWeatherChart :color="color" :chartData="chartData"></DraggableWeatherChart>
+          <DraggableWeatherChart
+            v-if="tab === 'Temperature'"
+            :color="color"
+            :tab="tab"
+            :chartData="chartData"
+          ></DraggableWeatherChart>
+          <DraggableWeatherChart
+            v-else-if="tab === 'Rain'"
+            :color="color"
+            :tab="tab"
+            :chartData="chartData"
+          ></DraggableWeatherChart>
+          <DraggableWeatherChart
+            v-else-if="tab === 'Humidity'"
+            :color="color"
+            :tab="tab"
+            :chartData="chartData"
+          ></DraggableWeatherChart>
+          <DraggableWeatherChart
+            v-else-if="tab === 'Sun'"
+            :color="color"
+            :tab="tab"
+            :chartData="chartData"
+          ></DraggableWeatherChart>
+          <DraggableWeatherChart
+            v-else-if="tab === 'Clouds'"
+            :color="color"
+            :tab="tab"
+            :chartData="chartData"
+          ></DraggableWeatherChart>
         </v-card>
       </v-tab-item>
     </v-tabs>
