@@ -6,6 +6,7 @@
       background-color="deep-purple accent-4"
       dark
       :vertical="true"
+      :grow="true"
     >
       <v-tabs-slider></v-tabs-slider>
       <v-tab
@@ -20,19 +21,28 @@
             v-if="tab === 'Temperature'"
             :color="color"
             :tab="tab"
-            :chartData="chartData"
+            :chartData="chartTempData"
+            type="Line"
+            maxSlider="115"
+            minSlider="32"
           ></DraggableWeatherChart>
           <DraggableWeatherChart
             v-else-if="tab === 'Rain'"
             :color="color"
             :tab="tab"
-            :chartData="chartData"
+            :chartData="chartRainData"
+            type="Bar"
+            maxSlider="100"
+            minSlider="0"
           ></DraggableWeatherChart>
           <DraggableWeatherChart
             v-else-if="tab === 'Humidity'"
             :color="color"
             :tab="tab"
-            :chartData="chartData"
+            :chartData="chartHumidityData"
+            type="Bar"
+            maxSlider="100"
+            minSlider="0"
           ></DraggableWeatherChart>
           <DraggableWeatherChart
             v-else-if="tab === 'Sun'"
@@ -40,12 +50,12 @@
             :tab="tab"
             :chartData="chartData"
           ></DraggableWeatherChart>
-          <DraggableWeatherChart
+          <!--<DraggableWeatherChart
             v-else-if="tab === 'Clouds'"
             :color="color"
             :tab="tab"
             :chartData="chartData"
-          ></DraggableWeatherChart>
+          ></DraggableWeatherChart>-->
         </v-card>
       </v-tab-item>
     </v-tabs>
@@ -64,9 +74,12 @@ export default {
   data() {
     return {
       tab: null,
-      tabs: ["Temperature", "Rain", "Clouds", "Humidity", "Sun"],
+      tabs: ["Temperature", "Rain", "Humidity", "Sun"],
+      chartTempData: {},
       chartData: {},
-      weatherData: null
+      weatherData: null,
+      chartHumidityData: {},
+      chartRainData: {}
     };
   },
   methods: {
@@ -93,12 +106,18 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
+    },
+    createHumidity(data) {
+      return data.map(element => element.humidity);
+    },
+    createRain(data) {
+      return data.map(element => element.clouds.all);
     }
   },
   mounted() {
     axios.get(`http://localhost:3000/api/weather`).then(res => {
       console.log(res.data);
-      this.chartData = {
+      this.chartTempData = {
         labels: this.createLabels(res.data),
         datasets: [
           {
@@ -113,6 +132,30 @@ export default {
             backgroundColor: colors.blue.accent4 + "1d",
             borderColor: colors.blue.accent4,
             data: this.createLows(res.data),
+            fill: true
+          }
+        ]
+      };
+      this.chartHumidityData = {
+        labels: this.createLabels(res.data),
+        datasets: [
+          {
+            label: "Humidity",
+            backgroundColor: colors.green.accent4 + "1d",
+            borderColor: colors.green.accent4,
+            data: this.createHumidity(res.data),
+            fill: true
+          }
+        ]
+      };
+      this.chartRainData = {
+        labels: this.createLabels(res.data),
+        datasets: [
+          {
+            label: "Rain",
+            backgroundColor: colors.pink.accent4 + "1d",
+            borderColor: colors.pink.accent4,
+            data: this.createRain(res.data),
             fill: true
           }
         ]

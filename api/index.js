@@ -2,11 +2,12 @@ const express = require("express");
 const app = express();
 const axios = require("axios");
 const localStorage = require("../server/localStorage.js");
-const moment = require('moment')
-const bodyParser = require('body-parser')
+const moment = require("moment");
+const bodyParser = require("body-parser");
+import { getSunrise, getSunset } from "sunrise-sunset-js";
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.get("/", (req, res, next) => {
   res.json({ status: true });
@@ -24,7 +25,7 @@ app.get("/current-weather", async (req, res, next) => {
 app.get("/weather", async (req, res, next) => {
   const _ = require("underscore");
   const access = "31d95b55c973a21c020ae5235b73d16e";
-  
+
   var weather = await axios.get(
     `http://api.openweathermap.org/data/2.5/forecast?q=Phoenix&appid=${access}&units=imperial&mode=json`
   );
@@ -46,14 +47,24 @@ app.get("/weather", async (req, res, next) => {
     let max = _.max(result[key].times, function(time) {
       return time.main.temp_max;
     });
-    return { 
-        maxTemp: max.main.temp_max, 
-        minTemp: min.main.temp_min, 
-        date: moment.unix(max.dt).format("LL"),
-        humidity: max.main.humidity,
-        desc: max.weather.description,
-        wind: max.wind,
-        clouds: max.clouds
+    return {
+      maxTemp: max.main.temp_max,
+      minTemp: min.main.temp_min,
+      date: moment.unix(max.dt).format("LL"),
+      humidity: max.main.humidity,
+      desc: max.weather.description,
+      wind: max.wind,
+      clouds: max.clouds,
+      sunrise: moment(getSunrise(
+        33.4484,
+        -112.074,
+        new Date(moment.unix(max.dt).format("LL"))
+      )).format('LLLL'),
+      sunset: moment(getSunset(
+        33.4484,
+        -112.074,
+        new Date(moment.unix(max.dt).format("LL"))
+      )).format('LLLL')
     };
   });
 
@@ -62,14 +73,16 @@ app.get("/weather", async (req, res, next) => {
 
 app.post("/weather-settings", async (req, res, next) => {
   localStorage.saveLocalStorage(req.body.query, req.body.value);
-  res.json({status:true, results: localStorage.getLocalStorage(req.query.query)});
+  res.json({
+    status: true,
+    results: localStorage.getLocalStorage(req.query.query)
+  });
 });
 
 app.get("/weather-settings", async (req, res, next) => {
   let results = localStorage.getLocalStorage(req.query.query);
-  res.json({status:true, results: results});
+  res.json({ status: true, results: results });
 });
-
 
 app.get("/random-movie", async (req, res, next) => {
   const movieOptions = ["tt3896198", "tt0071253", "tt0000111"];

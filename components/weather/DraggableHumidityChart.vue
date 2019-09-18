@@ -12,38 +12,32 @@
         :thumb-color="color"
         height="220px"
         thumb-label="always"
-        :max="maxVal"
-        :min="minVal"
+        :max="maxTemp"
+        :min="minTemp"
         v-model="sliderValue"
         vertical
         style="position: relative; height:220px; width:10%"
       ></v-slider>
       <LineChartWithAnnotation
-        v-if="type === 'Line'"
         style="position: relative; height:220px; width:80%"
         :chart-data="chartData"
         :options="options"
       ></LineChartWithAnnotation>
-      <BarChartWithAnnotation
-        v-if="type === 'Bar'"
-        style="position: relative; height:220px; width:80%"
-        :chart-data="chartData"
-        :options="options"
-      ></BarChartWithAnnotation>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import BarChartWithAnnotation from "@/components/weather/BarChartWithAnnotation";
 import LineChartWithAnnotation from "@/components/weather/LineChartWithAnnotation";
 import axios from "axios";
 
 export default {
-  components: { LineChartWithAnnotation, BarChartWithAnnotation },
-  props: ["chartData", "color", "tab", "type", "maxSlider", "minSlider"],
+  components: { LineChartWithAnnotation },
+  props: ["chartData", "color", "tab"],
   data() {
     return {
+      maxTemp: 115,
+      minTemp: 50,
       sliderValue: 75,
       loading: true,
       saving: false
@@ -75,25 +69,13 @@ export default {
           yAxes: [
             {
               ticks: {
-                suggestedMin: this.minVal,
-                suggestedMax: this.maxVal
+                suggestedMin: 72,
+                suggestedMax: 115
               }
             }
           ]
         }
       };
-    },
-    maxVal() {
-      if (this.maxSlider) {
-        return this.maxSlider;
-      }
-      return 115;
-    },
-    minVal() {
-      if (this.minSlider) {
-        return this.minSlider;
-      }
-      return 32;
     }
   },
   watch: {

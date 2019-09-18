@@ -68,7 +68,6 @@ app.get("/weather-settings", async (req, res, next) => {
   res.json({status:true, results: results});
 });
 
-
 app.get("/random-movie", async (req, res, next) => {
   const movieOptions = ["tt3896198", "tt0071253", "tt0000111"];
   var movieID = "tt" + Math.round(Math.random() * 9999999);
