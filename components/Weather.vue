@@ -18,7 +18,7 @@
             :tab="tab"
             :chartData="chartTempData"
             type="Line"
-            maxSlider="115"
+            maxSlider="110"
             minSlider="32"
             :settings="weatherSettings.temperature"
             label="Temperature"
@@ -31,7 +31,7 @@
             type="Bar"
             maxSlider="100"
             minSlider="0"
-            :settings="weatherSettings.Clouds"
+            :settings="weatherSettings.clouds"
             label="% of Rain"
           ></DraggableWeatherChart>
           <DraggableWeatherChart
@@ -114,14 +114,13 @@ export default {
       axios
         .get("/api/weather-settings?query=")
         .then(response => {
-          console.log(response.data.results);
-          this.weatherSettings = response.data.results;
+          console.log(response.data);
+          this.weatherSettings = response.data;
         })
         .catch(error => {});
     },
     getWeather() {
       axios.get(`http://localhost:3000/api/weather`).then(res => {
-        console.log(res.data);
         this.chartTempData = {
           labels: this.createLabels(res.data),
           datasets: [
@@ -146,7 +145,7 @@ export default {
           datasets: [
             {
               label: "Humidity",
-              backgroundColor: colors.green.accent4 + "1d",
+              backgroundColor: colors.green.accent4 + "33",
               borderColor: colors.green.accent4,
               data: this.createHumidity(res.data),
               fill: true
@@ -158,8 +157,8 @@ export default {
           datasets: [
             {
               label: "Rain",
-              backgroundColor: colors.pink.accent4 + "1d",
-              borderColor: colors.pink.accent4,
+              backgroundColor: colors.yellow.accent4 + "58",
+              borderColor: colors.yellow.accent4,
               data: this.createRain(res.data),
               fill: true
             }

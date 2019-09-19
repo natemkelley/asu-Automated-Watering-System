@@ -80,8 +80,7 @@ app.post("/weather-settings", async (req, res, next) => {
 });
 
 app.get("/weather-settings", async (req, res, next) => {
-  let results = localStorage.getLocalStorage(req.query.query);
-  res.json({ status: true, results: results });
+  res.json(localStorage.getLocalStorage(req.query.query));
 });
 
 app.get("/random-movie", async (req, res, next) => {

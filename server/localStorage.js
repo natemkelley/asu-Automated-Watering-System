@@ -1,35 +1,27 @@
 var LocalStorage = require("node-localstorage").LocalStorage;
+var colors = require("colors");
 localStorage = new LocalStorage("./scratch");
 
-localStorage.setItem("temperature", "50");
-localStorage.setItem("humidity", "0");
-localStorage.setItem("sun", "true");
-localStorage.setItem("Clouds", "50");
-localStorage.setItem("rain", "20");
-localStorage.setItem("moisture-sensors", "50");
-localStorage.setItem("recent-updates", String([]));
-localStorage.setItem("time", "6:00");
+initDatabse();
 
-exports.saveLocalStorage = function(objectName, data) {
-  if (!objectName) {
+exports.saveLocalStorage = function(objectName, value) {
+  if (!value) {
     return { error: "No object name" };
   }
-  if (!data) {
+  if (!value) {
     return { error: "No data" };
   }
-  localStorage.setItem(String(objectName), String(data));
+  let saveData = {"objectName":objectName,"value":value,"active":true}
+  localStorage.setItem(String(objectName), JSON.stringify(saveData));
   return localStorage.getItem(objectName);
 };
 
 exports.getLocalStorage = function(objectName) {
-  console.log("getting->", objectName);
+  console.log("getting ->", objectName);
   if (!objectName) {
     return allStorage();
   }
-  return {
-    value: localStorage.getItem(String(objectName)),
-    objectName: objectName
-  };
+  return JSON.parse(localStorage.getItem(objectName))
 };
 
 function allStorage() {
@@ -37,11 +29,34 @@ function allStorage() {
     i = localStorage.length;
 
   while (i--) {
-    archive[localStorage.key(i)] = {
-      objectName: localStorage.key(i),
-      value: localStorage.getItem(localStorage.key(i))
-    };
+    archive[localStorage.key(i)] = JSON.parse(localStorage.getItem(localStorage.key(i)));
   }
 
   return archive;
+}
+
+function initDatabse() {
+  var archive = {}, // Notice change here
+    i = localStorage.length;
+
+  localStorage.setItem("temperature", "50");
+  localStorage.setItem("humidity", "50");
+  localStorage.setItem("sun", "true");
+  localStorage.setItem("clouds", "50");
+  localStorage.setItem("rain", "50");
+  localStorage.setItem("moisture-sensors", "50");
+  localStorage.setItem("recent-updates", String([]));
+  localStorage.setItem("time", "6:00");
+
+  while (i--) {
+    localStorage.setItem(
+      localStorage.key(i),
+      JSON.stringify({
+        objectName: localStorage.key(i),
+        value: localStorage.getItem(localStorage.key(i)),
+        active: true
+      })
+    );
+  }
+  console.log(colors.green("Databse Inititalized"));
 }

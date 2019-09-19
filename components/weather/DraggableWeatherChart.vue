@@ -5,7 +5,7 @@
         <v-progress-circular :size="50" :width="7" color="deep-purple accent-4" indeterminate></v-progress-circular>
       </div>
     </v-row>
-    <v-row class="mx-1" v-show="!loading">
+    <v-row class="mx-1" v-show="!loading" justify="center" align="center">
       <v-col cols="2">
         <v-slider
           track-color="#f1f1f1"
@@ -24,13 +24,13 @@
       <v-col cols="10">
         <LineChartWithAnnotation
           v-if="type === 'Line'"
-          style="position: relative; height:220px; "
+          style="position: relative; height:210px; "
           :chart-data="chartData"
           :options="options"
         ></LineChartWithAnnotation>
         <BarChartWithAnnotation
           v-if="type === 'Bar'"
-          style="position: relative; height:220px; "
+          style="position: relative; height:210px; "
           :chart-data="chartData"
           :options="options"
         ></BarChartWithAnnotation>
@@ -132,7 +132,7 @@ export default {
   methods: {
     saveValue(value) {
       this.saveVal = value;
-      if (!this.saving) {
+      if (!this.saving && value) {
         this.saving = true;
         setTimeout(() => {
           axios
@@ -142,7 +142,7 @@ export default {
             )
             .then(response => {
               this.saving = false;
-              console.log("saved", response.data);
+              //console.log("saved", value, response.data);
             })
             .catch(error => {
               this.saving = false;
@@ -151,7 +151,6 @@ export default {
       }
     },
     setSliderValue() {
-      console.log("settings", this.settings);
       if (this.settings) {
         this.sliderValue = this.settings.value;
       } else {
