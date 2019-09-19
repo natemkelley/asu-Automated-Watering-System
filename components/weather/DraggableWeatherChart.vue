@@ -6,30 +6,35 @@
       </div>
     </v-row>
     <v-row class="mx-1" v-show="!loading">
-      <v-slider
-        track-color="#f1f1f1"
-        :track-fill-color="color"
-        :thumb-color="color"
-        height="220px"
-        thumb-label="always"
-        :max="maxVal"
-        :min="minVal"
-        v-model="sliderValue"
-        vertical
-        style="position: relative; height:220px; width:10%"
-      ></v-slider>
-      <LineChartWithAnnotation
-        v-if="type === 'Line'"
-        style="position: relative; height:220px; width:80%"
-        :chart-data="chartData"
-        :options="options"
-      ></LineChartWithAnnotation>
-      <BarChartWithAnnotation
-        v-if="type === 'Bar'"
-        style="position: relative; height:220px; width:80%"
-        :chart-data="chartData"
-        :options="options"
-      ></BarChartWithAnnotation>
+      <v-col cols="2">
+        <v-slider
+          track-color="#f1f1f1"
+          :track-fill-color="color"
+          :thumb-color="color"
+          height="80%"
+          thumb-label="always"
+          :max="maxVal"
+          :min="minVal"
+          v-model="sliderValue"
+          vertical
+          style="position: relative;"
+        ></v-slider>
+        <p v-if="label" class="text-center" style="height:20%">{{label}}</p>
+      </v-col>
+      <v-col cols="10">
+        <LineChartWithAnnotation
+          v-if="type === 'Line'"
+          style="position: relative; height:220px; "
+          :chart-data="chartData"
+          :options="options"
+        ></LineChartWithAnnotation>
+        <BarChartWithAnnotation
+          v-if="type === 'Bar'"
+          style="position: relative; height:220px; "
+          :chart-data="chartData"
+          :options="options"
+        ></BarChartWithAnnotation>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -41,12 +46,21 @@ import axios from "axios";
 
 export default {
   components: { LineChartWithAnnotation, BarChartWithAnnotation },
-  props: ["chartData", "color", "tab", "type", "maxSlider", "minSlider"],
+  props: [
+    "chartData",
+    "color",
+    "tab",
+    "type",
+    "maxSlider",
+    "minSlider",
+    "settings",
+    "label"
+  ],
   data() {
     return {
-      sliderValue: 75,
       loading: true,
-      saving: false
+      saving: false,
+      sliderValue: 72
     };
   },
   computed: {
@@ -102,11 +116,15 @@ export default {
     },
     sliderValue() {
       this.saveValue(this.sliderValue);
+    },
+    settings() {
+      this.setSliderValue();
     }
   },
   mounted() {
     if (this.chartData) {
       setTimeout(() => {
+        this.setSliderValue();
         this.loading = false;
       }, 450);
     }
@@ -120,16 +138,24 @@ export default {
           axios
             .post(
               "/api/weather-settings",
-              `query=temperature&value=${this.saveVal}`
+              `query=${this.settings.objectName}&value=${this.saveVal}`
             )
             .then(response => {
               this.saving = false;
-              console.log(response.data);
+              console.log("saved", response.data);
             })
             .catch(error => {
               this.saving = false;
             });
         }, 600);
+      }
+    },
+    setSliderValue() {
+      console.log("settings", this.settings);
+      if (this.settings) {
+        this.sliderValue = this.settings.value;
+      } else {
+        this.sliderValue = "";
       }
     }
   }

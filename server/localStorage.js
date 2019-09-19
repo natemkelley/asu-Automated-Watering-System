@@ -8,7 +8,7 @@ localStorage.setItem("Clouds", "50");
 localStorage.setItem("rain", "20");
 localStorage.setItem("moisture-sensors", "50");
 localStorage.setItem("recent-updates", String([]));
-localStorage.setItem("time", '6:00');
+localStorage.setItem("time", "6:00");
 
 exports.saveLocalStorage = function(objectName, data) {
   if (!objectName) {
@@ -22,7 +22,7 @@ exports.saveLocalStorage = function(objectName, data) {
 };
 
 exports.getLocalStorage = function(objectName) {
-  console.log('getting->',objectName)
+  console.log("getting->", objectName);
   if (!objectName) {
     return allStorage();
   }
@@ -33,14 +33,14 @@ exports.getLocalStorage = function(objectName) {
 };
 
 function allStorage() {
-  var archive = [], // Notice change here
+  var archive = {}, // Notice change here
     i = localStorage.length;
 
   while (i--) {
-    archive.push({
+    archive[localStorage.key(i)] = {
       objectName: localStorage.key(i),
       value: localStorage.getItem(localStorage.key(i))
-    });
+    };
   }
 
   return archive;

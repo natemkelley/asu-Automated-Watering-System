@@ -9,11 +9,7 @@
       :grow="true"
     >
       <v-tabs-slider></v-tabs-slider>
-      <v-tab
-        v-for="(tab,i) in tabs"
-        :key="i"
-        :href="`#tab-${i}`"
-      >{{ tab }}</v-tab>
+      <v-tab v-for="(tab,i) in tabs" :key="i" :href="`#tab-${i}`">{{ tab }}</v-tab>
       <v-tab-item v-for="(tab,i) in tabs" :key="i" :value="'tab-' + i">
         <v-card flat tile height="245px">
           <DraggableWeatherChart
@@ -24,6 +20,8 @@
             type="Line"
             maxSlider="115"
             minSlider="32"
+            :settings="weatherSettings.temperature"
+            label="Temperature"
           ></DraggableWeatherChart>
           <DraggableWeatherChart
             v-else-if="tab === 'Rain'"
@@ -33,6 +31,8 @@
             type="Bar"
             maxSlider="100"
             minSlider="0"
+            :settings="weatherSettings.Clouds"
+            label="% of Rain"
           ></DraggableWeatherChart>
           <DraggableWeatherChart
             v-else-if="tab === 'Humidity'"
@@ -42,6 +42,8 @@
             type="Bar"
             maxSlider="100"
             minSlider="0"
+            :settings="weatherSettings.humidity"
+            label="% Humidity"
           ></DraggableWeatherChart>
           <TimesWithSwitch
             v-else-if="tab === 'Sun'"
@@ -77,10 +79,10 @@ export default {
       tabs: ["Temperature", "Rain", "Humidity", "Sun"],
       chartTempData: {},
       chartData: {},
-      weatherData: null,
       chartHumidityData: {},
       chartRainData: {},
-      chartTime: {}
+      chartTime: {},
+      weatherSettings: {}
     };
   },
   methods: {
@@ -93,9 +95,6 @@ export default {
     createLows(data) {
       return data.map(element => element.minTemp);
     },
-    updateChart(label) {
-      console.log(label);
-    },
     createHumidity(data) {
       return data.map(element => element.humidity);
     },
@@ -104,59 +103,76 @@ export default {
     },
     createTime(data) {
       return data.map(function(element) {
-        return { sunrise: element.sunrise, sunset: element.sunset, date: element.date };
+        return {
+          sunrise: element.sunrise,
+          sunset: element.sunset,
+          date: element.date
+        };
+      });
+    },
+    getWeatherSettings() {
+      axios
+        .get("/api/weather-settings?query=")
+        .then(response => {
+          console.log(response.data.results);
+          this.weatherSettings = response.data.results;
+        })
+        .catch(error => {});
+    },
+    getWeather() {
+      axios.get(`http://localhost:3000/api/weather`).then(res => {
+        console.log(res.data);
+        this.chartTempData = {
+          labels: this.createLabels(res.data),
+          datasets: [
+            {
+              label: "Highs",
+              backgroundColor: colors.red.accent4 + "1d",
+              borderColor: colors.red.accent4,
+              data: this.createHighs(res.data),
+              fill: true
+            },
+            {
+              label: "Lows",
+              backgroundColor: colors.blue.accent4 + "1d",
+              borderColor: colors.blue.accent4,
+              data: this.createLows(res.data),
+              fill: true
+            }
+          ]
+        };
+        this.chartHumidityData = {
+          labels: this.createLabels(res.data),
+          datasets: [
+            {
+              label: "Humidity",
+              backgroundColor: colors.green.accent4 + "1d",
+              borderColor: colors.green.accent4,
+              data: this.createHumidity(res.data),
+              fill: true
+            }
+          ]
+        };
+        this.chartRainData = {
+          labels: this.createLabels(res.data),
+          datasets: [
+            {
+              label: "Rain",
+              backgroundColor: colors.pink.accent4 + "1d",
+              borderColor: colors.pink.accent4,
+              data: this.createRain(res.data),
+              fill: true
+            }
+          ]
+        };
+
+        this.chartTime = this.createTime(res.data);
       });
     }
   },
   mounted() {
-    axios.get(`http://localhost:3000/api/weather`).then(res => {
-      console.log(res.data);
-      this.chartTempData = {
-        labels: this.createLabels(res.data),
-        datasets: [
-          {
-            label: "Highs",
-            backgroundColor: colors.red.accent4 + "1d",
-            borderColor: colors.red.accent4,
-            data: this.createHighs(res.data),
-            fill: true
-          },
-          {
-            label: "Lows",
-            backgroundColor: colors.blue.accent4 + "1d",
-            borderColor: colors.blue.accent4,
-            data: this.createLows(res.data),
-            fill: true
-          }
-        ]
-      };
-      this.chartHumidityData = {
-        labels: this.createLabels(res.data),
-        datasets: [
-          {
-            label: "Humidity",
-            backgroundColor: colors.green.accent4 + "1d",
-            borderColor: colors.green.accent4,
-            data: this.createHumidity(res.data),
-            fill: true
-          }
-        ]
-      };
-      this.chartRainData = {
-        labels: this.createLabels(res.data),
-        datasets: [
-          {
-            label: "Rain",
-            backgroundColor: colors.pink.accent4 + "1d",
-            borderColor: colors.pink.accent4,
-            data: this.createRain(res.data),
-            fill: true
-          }
-        ]
-      };
-
-      this.chartTime = this.createTime(res.data);
-    });
+    this.getWeather();
+    this.getWeatherSettings();
   },
   computed: {
     color() {
