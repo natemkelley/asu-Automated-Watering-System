@@ -44,12 +44,12 @@
             maxSlider="100"
             minSlider="0"
           ></DraggableWeatherChart>
-          <DraggableWeatherChart
+          <TimesWithSwitch
             v-else-if="tab === 'Sun'"
             :color="color"
             :tab="tab"
-            :chartData="chartData"
-          ></DraggableWeatherChart>
+            :chartData="chartTime"
+          ></TimesWithSwitch>
           <!--<DraggableWeatherChart
             v-else-if="tab === 'Clouds'"
             :color="color"
@@ -67,10 +67,11 @@ import DraggableWeatherChart from "@/components/weather/DraggableWeatherChart";
 import colors from "vuetify/es5/util/colors";
 import axios from "axios";
 import moment from "moment";
+import TimesWithSwitch from "@/components/weather/TimesWithSwitch";
 
 export default {
   name: "Weather",
-  components: { DraggableWeatherChart },
+  components: { DraggableWeatherChart, TimesWithSwitch },
   data() {
     return {
       tab: null,
@@ -79,7 +80,8 @@ export default {
       chartData: {},
       weatherData: null,
       chartHumidityData: {},
-      chartRainData: {}
+      chartRainData: {},
+      chartTime: {}
     };
   },
   methods: {
@@ -112,6 +114,11 @@ export default {
     },
     createRain(data) {
       return data.map(element => element.clouds.all);
+    },
+    createTime(data) {
+      return data.map(function(element) {
+        return { sunrise: element.sunrise, sunset: element.sunset, date: element.date };
+      });
     }
   },
   mounted() {
@@ -160,6 +167,8 @@ export default {
           }
         ]
       };
+
+      this.chartTime = this.createTime(res.data);
     });
   },
   computed: {
