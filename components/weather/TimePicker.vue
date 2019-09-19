@@ -34,17 +34,33 @@ export default {
         this.loading = false;
       }, 450);
     }
+    axios
+      .get("/api/weather-settings?query=time")
+      .then(response => {
+        console.log(response.data.results.value);
+        this.time = response.data.results.value;
+      })
+      .catch(error => {
+      });
   },
   methods: {
     saveValue(value) {
-      this.$refs.dialog.save(value);
-      this.modal2 = false;
+      axios
+        .post("/api/weather-settings", `query=time&value=${value}`)
+        .then(response => {
+          //console.log(response.data);
+          this.$refs.dialog.save(value);
+          this.modal2 = false;
+        })
+        .catch(error => {
+          this.saving = false;
+        });
     }
   },
   watch: {
     time() {
       if (this.time) {
-        console.log(this.$refs.dialog);
+        //console.log(this.$refs.dialog);
       } else {
       }
     }

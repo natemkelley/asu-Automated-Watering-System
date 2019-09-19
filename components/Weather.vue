@@ -13,7 +13,6 @@
         v-for="(tab,i) in tabs"
         :key="i"
         :href="`#tab-${i}`"
-        @click="updateChart(tab)"
       >{{ tab }}</v-tab>
       <v-tab-item v-for="(tab,i) in tabs" :key="i" :value="'tab-' + i">
         <v-card flat tile height="245px">
@@ -96,18 +95,6 @@ export default {
     },
     updateChart(label) {
       console.log(label);
-      axios
-        .get("/api/weather-settings", {
-          params: {
-            query: "temperature"
-          }
-        })
-        .then(function(response) {
-          console.log(response.data);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
     },
     createHumidity(data) {
       return data.map(element => element.humidity);

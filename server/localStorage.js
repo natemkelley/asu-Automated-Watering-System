@@ -7,7 +7,8 @@ localStorage.setItem("sun", "true");
 localStorage.setItem("Clouds", "50");
 localStorage.setItem("rain", "20");
 localStorage.setItem("moisture-sensors", "50");
-localStorage.setItem("recent-updates", String([{}]));
+localStorage.setItem("recent-updates", String([]));
+localStorage.setItem("time", '6:00');
 
 exports.saveLocalStorage = function(objectName, data) {
   if (!objectName) {
@@ -21,6 +22,7 @@ exports.saveLocalStorage = function(objectName, data) {
 };
 
 exports.getLocalStorage = function(objectName) {
+  console.log('getting->',objectName)
   if (!objectName) {
     return allStorage();
   }
