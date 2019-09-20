@@ -60,7 +60,7 @@ export default {
     return {
       loading: true,
       saving: false,
-      sliderValue: 72
+      sliderValue: null
     };
   },
   computed: {
@@ -114,8 +114,10 @@ export default {
     chartData() {
       this.loading = false;
     },
-    sliderValue() {
-      this.saveValue(this.sliderValue);
+    sliderValue(oldVal, newVal) {
+      if (!this.loading && oldVal != newVal && newVal != null) {
+        this.saveValue(this.sliderValue);
+      }
     },
     settings() {
       this.setSliderValue();
@@ -132,7 +134,7 @@ export default {
   methods: {
     saveValue(value) {
       this.saveVal = value;
-      if (!this.saving && value) {
+      if (!this.saving && value && !this.loading && this.settings) {
         this.saving = true;
         setTimeout(() => {
           axios
@@ -142,7 +144,6 @@ export default {
             )
             .then(response => {
               this.saving = false;
-              //console.log("saved", value, response.data);
             })
             .catch(error => {
               this.saving = false;
@@ -153,8 +154,6 @@ export default {
     setSliderValue() {
       if (this.settings) {
         this.sliderValue = this.settings.value;
-      } else {
-        this.sliderValue = "";
       }
     }
   }

@@ -11,17 +11,21 @@ exports.saveLocalStorage = function(objectName, value) {
   if (!value) {
     return { error: "No data" };
   }
-  let saveData = {"objectName":objectName,"value":value,"active":true}
-  localStorage.setItem(String(objectName), JSON.stringify(saveData));
+  console.log(colors.green("saving " + objectName));
+  localStorage.setItem(
+    String(objectName),
+    JSON.stringify({ objectName: objectName, value: value, active: true })
+  );
   return localStorage.getItem(objectName);
 };
 
 exports.getLocalStorage = function(objectName) {
-  console.log("getting ->", objectName);
   if (!objectName) {
+    console.log("getting ->", "allStorage");
     return allStorage();
   }
-  return JSON.parse(localStorage.getItem(objectName))
+  console.log("getting ->", objectName);
+  return JSON.parse(localStorage.getItem(objectName));
 };
 
 function allStorage() {
@@ -29,25 +33,30 @@ function allStorage() {
     i = localStorage.length;
 
   while (i--) {
-    archive[localStorage.key(i)] = JSON.parse(localStorage.getItem(localStorage.key(i)));
+    archive[localStorage.key(i)] = JSON.parse(
+      localStorage.getItem(localStorage.key(i))
+    );
   }
 
   return archive;
 }
 
 function initDatabse() {
-  var archive = {}, // Notice change here
-    i = localStorage.length;
+  var archive = {}; 
+  var  i = localStorage.length;
 
-  localStorage.setItem("temperature", "50");
-  localStorage.setItem("humidity", "50");
-  localStorage.setItem("sun", "true");
-  localStorage.setItem("clouds", "50");
-  localStorage.setItem("rain", "50");
-  localStorage.setItem("moisture-sensors", "50");
-  localStorage.setItem("recent-updates", String([]));
-  localStorage.setItem("time", "6:00");
+  if (i<1) {
+    localStorage.setItem("temperature", "50");
+    localStorage.setItem("humidity", "50");
+    localStorage.setItem("sun", "true");
+    localStorage.setItem("clouds", "50");
+    localStorage.setItem("rain", "50");
+    localStorage.setItem("moisture-sensors", "50");
+    localStorage.setItem("recent-updates", String([]));
+    localStorage.setItem("time", "6:00");
+  }
 
+  //changed structure of database to json objects to account for active status
   while (i--) {
     localStorage.setItem(
       localStorage.key(i),

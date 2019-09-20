@@ -3,15 +3,22 @@
     <v-tabs
       v-model="tab"
       class="elevation-2"
-      background-color="deep-purple accent-4"
+      :background-color="color"
       dark
       :vertical="true"
       :grow="true"
     >
       <v-tabs-slider></v-tabs-slider>
-      <v-tab v-for="(tab,i) in tabs" :key="i" :href="`#tab-${i}`">{{ tab }}</v-tab>
+      <v-tab
+        v-for="(tab,i) in tabs"
+        :key="i"
+        :href="`#tab-${i}`"
+        v-bind:class="{ strikethrough: !checkIfActive(tab) }"
+      >
+        <div>{{ tab }}</div>
+      </v-tab>
       <v-tab-item v-for="(tab,i) in tabs" :key="i" :value="'tab-' + i">
-        <v-card flat tile height="245px">
+        <v-card flat tile height="245px" :disabled='!checkIfActive(tab)'>
           <DraggableWeatherChart
             v-if="tab === 'Temperature'"
             :color="color"
@@ -110,11 +117,11 @@ export default {
         };
       });
     },
-    getWeatherSettings() {
+    getSettings() {
       axios
         .get("/api/weather-settings?query=")
         .then(response => {
-          console.log(response.data);
+          //console.log(response.data);
           this.weatherSettings = response.data;
         })
         .catch(error => {});
@@ -126,15 +133,15 @@ export default {
           datasets: [
             {
               label: "Highs",
-              backgroundColor: colors.red.accent4 + "1d",
-              borderColor: colors.red.accent4,
+              backgroundColor: colors.red.accent2 + "1d",
+              borderColor: colors.red.accent2,
               data: this.createHighs(res.data),
               fill: true
             },
             {
               label: "Lows",
-              backgroundColor: colors.blue.accent4 + "1d",
-              borderColor: colors.blue.accent4,
+              backgroundColor: colors.blue.accent1 + "1d",
+              borderColor: colors.blue.accent1,
               data: this.createLows(res.data),
               fill: true
             }
@@ -167,16 +174,30 @@ export default {
 
         this.chartTime = this.createTime(res.data);
       });
+    },
+    checkIfActive(objectName) {
+      objectName = objectName.toLowerCase();
+      if (this.weatherSettings.hasOwnProperty(objectName)) {
+        return objectName, this.weatherSettings[objectName].active;
+      } else {
+        return true; //default to true I guess?
+      }
     }
   },
   mounted() {
+    this.getSettings();
     this.getWeather();
-    this.getWeatherSettings();
   },
   computed: {
     color() {
-      return colors.deepPurple.accent4;
+      return colors.green.darken1;
     }
   }
 };
 </script>
+
+<style scoped>
+.strikethrough {
+  text-decoration: line-through !important;
+}
+</style>

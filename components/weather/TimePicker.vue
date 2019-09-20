@@ -66,17 +66,10 @@ export default {
       axios
         .get("/api/weather-settings?query=time")
         .then(response => {
+          console.log(response.data)
           this.time = response.data.value;
         })
         .catch(error => {});
-    }
-  },
-  watch: {
-    time() {
-      if (this.time) {
-        //console.log(this.$refs.dialog);
-      } else {
-      }
     }
   }
 };
