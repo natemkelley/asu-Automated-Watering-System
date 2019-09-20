@@ -12,7 +12,7 @@
         </v-row>
         <v-row align="center">
           <v-col>
-            <Weather></Weather>
+            <Weather :weatherSettings="weatherSettings"></Weather>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -57,8 +57,24 @@ export default {
     Weather,
     RecentUpdates
   },
+  data() {
+    return {
+      weatherSettings: {}
+    };
+  },
+  mounted(){
+    this.getSettings();
+  },
   methods: {
-    getRandomMovie() {}
+    getSettings() {
+      axios
+        .get("/api/weather-settings?query=")
+        .then(response => {
+          //console.log(response.data);
+          this.weatherSettings = response.data;
+        })
+        .catch(error => {});
+    }
   }
 };
 </script>

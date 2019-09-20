@@ -32,8 +32,8 @@ export default {
       time: null,
       menu2: false,
       modal2: false,
-      snackbar:false,
-      text: 'Hello, I\'m a snackbar',
+      snackbar: false,
+      text: "Hello, I'm a snackbar"
     };
   },
   mounted() {
@@ -53,8 +53,8 @@ export default {
           this.$refs.dialog.save(value);
           this.modal2 = false;
           if (response.data.status) {
-            this.text = 'Saved time: '+ value
-            this.snackbar = true
+            this.text = "Saved time: " + value;
+            this.snackbar = true;
           }
         })
         .catch(error => {
@@ -66,8 +66,11 @@ export default {
       axios
         .get("/api/weather-settings?query=time")
         .then(response => {
-          console.log(response.data)
-          this.time = response.data.value;
+          if (response.data.value.includes("Na")) {
+            this.time = null;
+          } else {
+            this.time = response.data.value;
+          }
         })
         .catch(error => {});
     }

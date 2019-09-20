@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid style="min-height: 540px">
+  <v-container fluid style="min-height: 500px">
     <v-row v-show="loading" justify="center" align="center" class="loader">
       <div class="text-center ma-12">
         <v-progress-circular :size="80" :width="7" color="white" indeterminate></v-progress-circular>
@@ -137,7 +137,6 @@ export default {
 
 <style scoped>
 .loader {
-  position: absolute;
   width: 100%;
   height: 500px;
 }

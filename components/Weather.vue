@@ -79,6 +79,7 @@ import TimesWithSwitch from "@/components/weather/TimesWithSwitch";
 
 export default {
   name: "Weather",
+  props:['weatherSettings'],
   components: { DraggableWeatherChart, TimesWithSwitch },
   data() {
     return {
@@ -89,7 +90,6 @@ export default {
       chartHumidityData: {},
       chartRainData: {},
       chartTime: {},
-      weatherSettings: {}
     };
   },
   methods: {
@@ -116,15 +116,6 @@ export default {
           date: element.date
         };
       });
-    },
-    getSettings() {
-      axios
-        .get("/api/weather-settings?query=")
-        .then(response => {
-          //console.log(response.data);
-          this.weatherSettings = response.data;
-        })
-        .catch(error => {});
     },
     getWeather() {
       axios.get(`http://localhost:3000/api/weather`).then(res => {
@@ -185,7 +176,6 @@ export default {
     }
   },
   mounted() {
-    this.getSettings();
     this.getWeather();
   },
   computed: {
