@@ -70,7 +70,7 @@ export default {
       axios
         .get("/api/weather-settings?query=")
         .then(response => {
-          //console.log(response.data);
+          console.log(response.data);
           this.weatherSettings = response.data;
         })
         .catch(error => {});

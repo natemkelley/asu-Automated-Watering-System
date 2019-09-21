@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     createLabels(data) {
-      return data.map(element => moment(element.date).format("l"));
+      return data.map(element => moment(new Date(element.date)).format("l"));
     },
     createHighs(data) {
       return data.map(element => element.maxTemp);

@@ -134,6 +134,7 @@ export default {
   methods: {
     saveValue(value) {
       this.saveVal = value;
+      console.log(!this.saving, value, !this.loading, this.settings)
       if (!this.saving && value && !this.loading && this.settings) {
         this.saving = true;
         setTimeout(() => {

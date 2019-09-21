@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <v-container>
+    <v-row v-show="loading" justify="center" align="center">
+      <div class="text-center ma-12">
+        <v-progress-circular :size="50" :width="7" color="deep-purple accent-4" indeterminate></v-progress-circular>
+      </div>
+    </v-row>
     <v-dialog ref="dialog" v-model="modal2" :return-value.sync="time" persistent width="285px">
       <template v-slot:activator="{ on }">
         <v-text-field
@@ -16,11 +21,7 @@
         <v-btn text color="primary" @click="saveValue(time)">OK</v-btn>
       </v-time-picker>
     </v-dialog>
-    <v-snackbar v-model="snackbar" color="success" right="right" :timeout="3000" top="top">
-      {{ text }}
-      <v-btn dark text>Close</v-btn>
-    </v-snackbar>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -33,7 +34,8 @@ export default {
       menu2: false,
       modal2: false,
       snackbar: false,
-      text: "Hello, I'm a snackbar"
+      text: "Hello, I'm a snackbar",
+      loading: true
     };
   },
   mounted() {
@@ -49,12 +51,10 @@ export default {
       axios
         .post("/api/weather-settings", `query=time&value=${value}`)
         .then(response => {
-          console.log(response.data.status);
           this.$refs.dialog.save(value);
           this.modal2 = false;
           if (response.data.status) {
             this.text = "Saved time: " + value;
-            this.snackbar = true;
           }
         })
         .catch(error => {
@@ -71,6 +71,7 @@ export default {
           } else {
             this.time = response.data.value;
           }
+          this.loading = false;
         })
         .catch(error => {});
     }

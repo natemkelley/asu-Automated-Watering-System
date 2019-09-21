@@ -55,16 +55,16 @@ app.get("/weather", async (req, res, next) => {
       desc: max.weather.description,
       wind: max.wind,
       clouds: max.clouds,
-      sunrise: moment(getSunrise(
-        33.4484,
-        -112.074,
-        new Date(moment.unix(max.dt).format("LL"))
-      )).format('LLLL'),
-      sunset: moment(getSunset(
-        33.4484,
-        -112.074,
-        new Date(moment.unix(max.dt).format("LL"))
-      )).format('LLLL')
+      sunrise: moment(
+        getSunrise(
+          33.4484,
+          -112.074,
+          new Date(moment.unix(max.dt).format("LL"))
+        )
+      ).format("LLLL"),
+      sunset: moment(
+        getSunset(33.4484, -112.074, new Date(moment.unix(max.dt).format("LL")))
+      ).format("LLLL")
     };
   });
 
@@ -72,11 +72,16 @@ app.get("/weather", async (req, res, next) => {
 });
 
 app.post("/weather-settings", async (req, res, next) => {
-  localStorage.saveLocalStorage(req.body.query, req.body.value);
-  res.json({
-    status: true,
-    results: localStorage.getLocalStorage(req.query.query)
-  });
+  console.log(req.body.query, req.body.value, req.body);
+  let value = localStorage.saveLocalStorage(req.body.query, req.body.value);
+  if (value.error === false) {
+    res.json(value);
+  } else {
+    res.json({
+      status: true,
+      results: localStorage.getLocalStorage(req.query.query)
+    });
+  }
 });
 
 app.get("/weather-settings", async (req, res, next) => {

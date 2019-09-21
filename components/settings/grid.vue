@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid style="min-height: 500px">
+  <v-container fluid style="min-height: 500pxn">
     <v-row v-show="loading" justify="center" align="center" class="loader">
       <div class="text-center ma-12">
         <v-progress-circular :size="80" :width="7" color="white" indeterminate></v-progress-circular>
@@ -12,12 +12,12 @@
       align="start"
       justify="start"
     >
-      <v-col md="4" v-for="category in categories" class="board-column">
+      <v-col md="4" v-for="category in categories" class="board-column" :key="category.name">
         <div class="board-column-style mx-1">
           <div :class="'board-column-header '+ category.color">{{category.name}}</div>
           <div class="board-column-content-wrapper">
             <div class="board-column-content" blast="123" :testing="category.name">
-              <div v-for="n in 5" class="board-item" :swaggah="n">
+              <div v-for="n in 5" class="board-item" :swaggah="n" :key="n">
                 <div class="board-item-content">
                   <span>Item #</span>
                   {{n}}
