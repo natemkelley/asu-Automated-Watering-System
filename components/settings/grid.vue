@@ -16,11 +16,17 @@
         <div class="board-column-style mx-1">
           <div :class="'board-column-header '+ category.color">{{category.name}}</div>
           <div class="board-column-content-wrapper">
-            <div class="board-column-content" blast="123" :testing="category.name">
-              <div v-for="n in 5" class="board-item" :swaggah="n" :key="n">
+            <div class="board-column-content" :activeStatus="category.name">
+              <div
+                v-for="(settings, n) in weatherSettings"
+                class="board-item"
+                :objectname="n"
+                :key="n"
+                v-if="category.name === settings.active"
+              >
                 <div class="board-item-content">
-                  <span>Item #</span>
-                  {{n}}
+                  <span>{{category.name}}</span>
+                  {{settings.objectName}} - {{settings.active}}
                 </div>
               </div>
             </div>
@@ -33,23 +39,24 @@
 
 <script>
 export default {
+  props: ["weatherSettings"],
   data() {
     return {
       items: 15,
       loading: true,
+      ableToSave: false,
       categories: [
-        { name: "AND", color: "blue" },
-        { name: "OR", color: "orange" },
-        { name: "DISABLED", color: "blue-grey darken-1" }
+        { name: "and", color: "blue" },
+        { name: "or", color: "orange" },
+        { name: "disabled", color: "blue-grey darken-1" }
       ],
       columnGrids: []
     };
   },
   created() {},
-  mounted() {
-    this.createdGrid(); //will turn off loader when finished
-  },
+  mounted() {},
   methods: {
+    //This creates a grid and triggers api refresh when items are moved
     createdGrid() {
       const Muuri = require("muuri");
 
@@ -90,11 +97,15 @@ export default {
             // surroundings.
             item.getElement().style.width = "";
             item.getElement().style.height = "";
+            if (!this.loading && this.ableToSave) {
+              this.saveLayout(this.columnGrids).then(() => {
+                this.$store.commit("triggerRefresh"); //this will trigger a refresh
+              });
+            }
           })
           .on("layoutEnd", items => {
             // Let's keep the board grid up to date with the
             // dimensions changes of column grids.
-            this.saveLayout(this.columnGrids, "swaggah");
           });
 
         grid.hide();
@@ -104,31 +115,46 @@ export default {
       });
       this.toggleLoader();
     },
-    saveLayout(columnGrids) {
-      columnGrids.forEach((container, n) => {
-        window.localStorage.setItem(
-          container.getElement().getAttribute("testing"),
-          serializeLayout(container, "swaggah")
-        );
+    async saveLayout(columnGrids) {
+      return new Promise(resolve => {
+        columnGrids.forEach((container, n) => {
+          var column = serializeLayout(container, "objectname");
+          column.forEach(item => {
+            console.log(
+              container.getElement().getAttribute("activeStatus"),
+              item
+            );
+          });
+        });
+        resolve(true);
       });
       function serializeLayout(grid, attribute) {
         var itemIds = grid.getItems().map(function(item) {
           return item.getElement().getAttribute(attribute);
         });
-        return JSON.stringify(itemIds);
+        return itemIds;
       }
     },
     toggleLoader() {
       this.loading = false;
-      this.toggleGrid();
+      this.refreshGrid();
+      this.ableToSave = true;
     },
-    toggleGrid() {
+    refreshGrid() {
       this.columnGrids.forEach(function(grid) {
         grid.show(null, {
           onFinish: items => {
             grid.refreshItems().layout();
           }
         });
+      });
+    }
+  },
+  watch: {
+    weatherSettings() {
+      this.$nextTick(() => {
+        console.log("here", this.weatherSettings);
+        this.createdGrid(); //will turn off loader when finished
       });
     }
   }

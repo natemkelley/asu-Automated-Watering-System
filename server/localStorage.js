@@ -2,7 +2,7 @@ var colors = require("colors");
 var LocalStorage = require("node-localstorage").LocalStorage;
 var localStorage = new LocalStorage("./scratch");
 
-exports.saveLocalStorage = function(objectName, value) {
+exports.saveLocalStorage = function(objectName, value, active) {
   if (!objectName) {
     return { error: "No object name" };
   }
@@ -15,7 +15,7 @@ exports.saveLocalStorage = function(objectName, value) {
     JSON.stringify({
       objectName: objectName,
       value: value,
-      active: getActiveStatue(objectName),
+      active: active || getActiveStatue(objectName),
       error: false
     })
   );
@@ -79,7 +79,7 @@ function initDatabse() {
 }
 
 function getActiveStatue(objectName) {
-  return true;
+  return 'disabled';
 }
 function isJson(str) {
   //console.log(colors.green(localStorage.getItem(str).length < 5));

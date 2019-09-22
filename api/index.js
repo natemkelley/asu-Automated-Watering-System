@@ -72,8 +72,7 @@ app.get("/weather", async (req, res, next) => {
 });
 
 app.post("/weather-settings", async (req, res, next) => {
-  console.log(req.body.query, req.body.value, req.body);
-  let value = localStorage.saveLocalStorage(req.body.query, req.body.value);
+  let value = localStorage.saveLocalStorage(req.body.query, req.body.value, req.body.active);
   if (value.error === false) {
     res.json(value);
   } else {

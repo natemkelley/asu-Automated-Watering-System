@@ -5,7 +5,7 @@
       <span class="title font-weight-light">Current Settings</span>
     </v-card-title>
 
-    <GridComponent></GridComponent>
+    <GridComponent :weatherSettings="weatherSettings"></GridComponent>
 
 
 
@@ -37,6 +37,7 @@ import GridComponent from '@/components/settings/grid'
 
 export default {
   name: "CurrentStatus",
+  props:["weatherSettings"],
   components:{GridComponent},
   data() {
     return {

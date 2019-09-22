@@ -7,12 +7,12 @@
       <v-container fluid>
         <v-row align="center">
           <v-col>
-            <CurrentSettings></CurrentSettings>
+            <CurrentSettings :weatherSettings="weatherSettings"></CurrentSettings>
           </v-col>
         </v-row>
         <v-row align="center">
           <v-col>
-            <Weather :weatherSettings="weatherSettings"></Weather>
+            <Weather :weatherSettings="weatherSettings" :weather="weather"></Weather>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -59,22 +59,34 @@ export default {
   },
   data() {
     return {
-      weatherSettings: {}
+      weatherSettings: {},
+      weather: {}
     };
   },
-  mounted(){
-    this.getSettings();
+  mounted() {
+    //console.log(this.$store.state);
   },
   methods: {
     getSettings() {
       axios
         .get("/api/weather-settings?query=")
         .then(response => {
-          console.log(response.data);
           this.weatherSettings = response.data;
         })
         .catch(error => {});
+    },
+    getWeather() {
+      axios.get(`http://localhost:3000/api/weather`).then(res => {
+        this.weather = res.data;
+      });
     }
+  },
+  created() {
+    this.getSettings();
+    this.getWeather();
+    this.$store.subscribe((mutation, state) => {
+      console.log(state.refresh)
+    });
   }
 };
 </script>
