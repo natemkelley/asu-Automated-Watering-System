@@ -38,7 +38,7 @@
             type="Bar"
             maxSlider="100"
             minSlider="0"
-            :settings="weatherSettings.clouds"
+            :settings="weatherSettings.rain"
             label="% of Rain"
           ></DraggableWeatherChart>
           <DraggableWeatherChart
@@ -118,6 +118,7 @@ export default {
       });
     },
     setWeatherCharts(data) {
+      console.log(data)
       this.chartTempData = {
         labels: this.createLabels(data),
         datasets: [

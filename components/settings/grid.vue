@@ -1,5 +1,6 @@
+//  v-if="category.name === settings.active"
 <template>
-  <v-container fluid style="min-height: 500pxn">
+  <v-container fluid style="min-height: 500px">
     <v-row v-show="loading" justify="center" align="center" class="loader">
       <div class="text-center ma-12">
         <v-progress-circular :size="80" :width="7" color="white" indeterminate></v-progress-circular>
@@ -12,22 +13,18 @@
       align="start"
       justify="start"
     >
-      <v-col md="4" v-for="category in categories" class="board-column" :key="category.name">
-        <div class="board-column-style mx-1">
-          <div :class="'board-column-header '+ category.color">{{category.name}}</div>
+      <v-col md="4" v-for="category in categories" class="board-column my-n6" :key="category.name">
+        <div class="board-column-style" v-if="gridSettings">
+          <div :class="'allcaps board-column-header '+ category.color">{{category.name}}</div>
           <div class="board-column-content-wrapper">
             <div class="board-column-content" :activeStatus="category.name">
               <div
-                v-for="(settings, n) in weatherSettings"
+                v-for="(setting) in filteredItems(gridSettings, category.name)"
                 class="board-item"
-                :objectname="n"
-                :key="n"
-                v-if="category.name === settings.active"
+                :objectname="setting.objectName"
+                :key="setting.objectName"
               >
-                <div class="board-item-content">
-                  <span>{{category.name}}</span>
-                  {{settings.objectName}} - {{settings.active}}
-                </div>
+                <div class="board-item-content caps">{{setting.objectName}} - {{setting.active}}</div>
               </div>
             </div>
           </div>
@@ -38,13 +35,15 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  props: ["weatherSettings"],
+  props: ["gridSettings"],
   data() {
     return {
-      items: 15,
       loading: true,
       ableToSave: false,
+      created: false,
       categories: [
         { name: "and", color: "blue" },
         { name: "or", color: "orange" },
@@ -53,9 +52,16 @@ export default {
       columnGrids: []
     };
   },
-  created() {},
-  mounted() {},
   methods: {
+    filteredItems: function(items, catName) {
+      var arr = [];
+      for (var key in items) {
+        if (items[key].active == catName) {
+          arr.push(items[key]);
+        }
+      }
+      return arr;
+    },
     //This creates a grid and triggers api refresh when items are moved
     createdGrid() {
       const Muuri = require("muuri");
@@ -63,7 +69,6 @@ export default {
       var itemContainers = [].slice.call(
         this.$el.querySelectorAll(".board-column-content")
       );
-      var boardGrid;
 
       // Define the column grids so we can drag those
       // items around.
@@ -85,27 +90,17 @@ export default {
           .on("dragStart", function(item) {
             // Let's set fixed widht/height to the dragged item
             // so that it does not stretch unwillingly when
-            // it's appended to the document body for the
-            // duration of the drag.
+            // it's appended to the document body for the duration of the drag.
             item.getElement().style.width = item.getWidth() + "px";
             item.getElement().style.height = item.getHeight() + "px";
           })
           .on("dragReleaseEnd", item => {
             // Let's remove the fixed width/height from the
             // dragged item now that it is back in a grid
-            // column and can freely adjust to it's
-            // surroundings.
+            // column and can freely adjust to it's surroundings.
             item.getElement().style.width = "";
             item.getElement().style.height = "";
-            if (!this.loading && this.ableToSave) {
-              this.saveLayout(this.columnGrids).then(() => {
-                this.$store.commit("triggerRefresh"); //this will trigger a refresh
-              });
-            }
-          })
-          .on("layoutEnd", items => {
-            // Let's keep the board grid up to date with the
-            // dimensions changes of column grids.
+            this.startSavingGrids();
           });
 
         grid.hide();
@@ -113,21 +108,21 @@ export default {
         // array, so we can access it later on.
         this.columnGrids.push(grid);
       });
-      this.toggleLoader();
     },
     async saveLayout(columnGrids) {
       return new Promise(resolve => {
-        columnGrids.forEach((container, n) => {
-          var column = serializeLayout(container, "objectname");
-          column.forEach(item => {
-            console.log(
-              container.getElement().getAttribute("activeStatus"),
-              item
+        columnGrids.forEach(container => {
+          serializeLayout(container, "objectname").forEach(objectName => {
+            this.saveValue(
+              objectName,
+              null,
+              container.getElement().getAttribute("activeStatus")
             );
           });
         });
         resolve(true);
       });
+
       function serializeLayout(grid, attribute) {
         var itemIds = grid.getItems().map(function(item) {
           return item.getElement().getAttribute(attribute);
@@ -135,9 +130,24 @@ export default {
         return itemIds;
       }
     },
+    saveValue(objectName, value, active) {
+      return new Promise(resolve => {
+        axios
+          .post(
+            "/api/weather-settings",
+            `query=${objectName}&value=${value}&active=${active}`
+          )
+          .then(response => {
+            //console.log(response.data);
+            resolve(response.data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
+    },
     toggleLoader() {
       this.loading = false;
-      this.refreshGrid();
       this.ableToSave = true;
     },
     refreshGrid() {
@@ -148,20 +158,64 @@ export default {
           }
         });
       });
+    },
+    startSavingGrids() {
+      console.log("saving!!!!!");
+      if (!this.loading && this.ableToSave) {
+        this.ableToSave = false;
+        this.saveLayout(this.columnGrids).then(() => {
+          this.$store.commit("triggerRefresh"); //this will trigger a refresh
+          this.ableToSave = true;
+        });
+      }
+    },
+    destoryGrid() {
+      if (this.columnGrids.length) {
+        console.log(this.columnGrids);
+        this.columnGrids.forEach(grid => {
+          console.log("destoryed", grid);
+          grid.destroy();
+        });
+
+        this.columnGrids = [];
+      }
     }
   },
   watch: {
-    weatherSettings() {
+    gridSettings(newData, oldData) {
       this.$nextTick(() => {
-        console.log("here", this.weatherSettings);
-        this.createdGrid(); //will turn off loader when finished
+        this.destoryGrid();
+        this.createdGrid();
+        this.toggleLoader();
+        this.refreshGrid();
       });
+    }
+  },
+  computed: {
+    showError() {
+      if (this.gridSettings && !this.loading) {
+        if (
+          this.gridSettings.timer.active == "disabled" &&
+          this.gridSettings.time.active == "disabled"
+        ) {
+          return true;
+        }
+      }
+      return false;
     }
   }
 };
 </script>
 
 <style scoped>
+.allcaps {
+  text-transform: uppercase;
+}
+
+.caps {
+  text-transform: capitalize;
+}
+
 .loader {
   width: 100%;
   height: 500px;
@@ -177,15 +231,9 @@ export default {
 
 .board {
   /*position: relative;*/
-  max-width: 100%;
   height: auto !important;
 }
 .board-column {
-  /*position: absolute;*/
-  left: 0;
-  right: 0;
-  /*width: 30%;*/
-  margin: 0 0;
   z-index: 1;
   transform: none !important;
 }
@@ -195,6 +243,9 @@ export default {
   background: #f0f0f0;
   border-radius: 3px;
   z-index: 1;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
 }
 
 .board-column.muuri-item-releasing {

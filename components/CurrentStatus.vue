@@ -12,7 +12,7 @@
     <v-card-actions>
       <v-list-item class="grow">
         <v-list-item-avatar color="grey darken-3">
-          <v-img class="elevation-6" src="https://www.w3schools.com/w3images/avatar2.png"></v-img>
+          <v-img class="elevation-6" src="https://image.flaticon.com/icons/svg/147/147144.svg"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>

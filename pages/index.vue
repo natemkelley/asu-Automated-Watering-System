@@ -85,7 +85,8 @@ export default {
     this.getSettings();
     this.getWeather();
     this.$store.subscribe((mutation, state) => {
-      console.log(state.refresh)
+      console.log(state.refresh);
+      this.getSettings();
     });
   }
 };

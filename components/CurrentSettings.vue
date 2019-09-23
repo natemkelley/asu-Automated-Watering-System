@@ -1,18 +1,17 @@
 <template>
-  <v-card class="mx-auto" height="100%" :color="color" dark>
-    <v-card-title>
-      <v-icon large left>mdi-tune</v-icon>
+  <v-card class="mx-auto" height="100%" :color="color">
+    <v-card-title class="white--text">
+      <v-icon large left color="white">mdi-tune</v-icon>
       <span class="title font-weight-light">Current Settings</span>
     </v-card-title>
 
-    <GridComponent :weatherSettings="weatherSettings"></GridComponent>
-
-
+    <TriggerComponent :triggerSettings="triggerSettings" v-if="triggerSettings"></TriggerComponent>
+    <GridComponent :gridSettings="gridSettings"></GridComponent>
 
     <v-card-actions>
       <v-list-item class="grow">
         <v-list-item-avatar color="grey darken-3">
-          <v-img class="elevation-6" src="https://www.w3schools.com/w3images/avatar2.png"></v-img>
+          <v-img class="elevation-6" src="https://image.flaticon.com/icons/svg/147/147144.svg"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
@@ -33,12 +32,13 @@
 
 <script>
 import colors from "vuetify/es5/util/colors";
-import GridComponent from '@/components/settings/grid'
+import GridComponent from "@/components/settings/grid";
+import TriggerComponent from "@/components/settings/trigger";
 
 export default {
-  name: "CurrentStatus",
-  props:["weatherSettings"],
-  components:{GridComponent},
+  name: "CurrentSettings",
+  props: ["weatherSettings"],
+  components: { GridComponent, TriggerComponent },
   data() {
     return {
       isOpen: false
@@ -47,6 +47,15 @@ export default {
   computed: {
     color() {
       return colors.green.darken1;
+    },
+    triggerSettings() {
+      if (!this.weatherSettings.time || !this.weatherSettings.timer) {
+        return false;
+      }
+      return [this.weatherSettings.time, this.weatherSettings.timer];
+    },
+    gridSettings() {
+      return this.weatherSettings;
     }
   }
 };

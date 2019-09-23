@@ -7,15 +7,21 @@ exports.saveLocalStorage = function(objectName, value, active) {
     return { error: "No object name" };
   }
   if (!value) {
-    return { error: "No data" };
+    value = JSON.parse(localStorage.getItem(objectName)).value;
+    console.log(colors.red('value', value))
   }
-  console.log(colors.green("saving " + objectName));
+  if (!active) {
+    active = JSON.parse(localStorage.getItem(objectName)).active
+    console.log(colors.red('active', active))
+  }
+
+  console.log(colors.green("saving " + objectName + " with a value of "+ value + " and a active of " + active));
   localStorage.setItem(
     String(objectName),
     JSON.stringify({
       objectName: objectName,
       value: value,
-      active: active || getActiveStatue(objectName),
+      active: active || 'and',
       error: false
     })
   );
@@ -55,26 +61,36 @@ function initDatabse() {
     localStorage.setItem("temperature", "50");
     localStorage.setItem("humidity", "50");
     localStorage.setItem("sun", "true");
-    localStorage.setItem("clouds", "50");
     localStorage.setItem("rain", "50");
     localStorage.setItem("moisture-sensors", "50");
-    localStorage.setItem("time", "6:00");
-    localStorage.setItem("recent-updates", String([]));
     i = localStorage.length;
   }
 
   //changed structure of database to json objects to account for active status
   while (i--) {
-    //console.log(isJson(localStorage.key(i)))
     if (!isJson(localStorage.key(i))) {
       exports.saveLocalStorage(
         localStorage.key(i),
-        localStorage.getItem(localStorage.key(i))
+        localStorage.getItem(localStorage.key(i)),
+        'and'
       );
     }
-
-    //console.log(localStorage.getItem(localStorage.key(i)));
   }
+  exports.saveLocalStorage(
+    'recent-updates',
+    JSON.stringify([{}]),
+    'recent-updates'
+  );
+  exports.saveLocalStorage(
+    'time',
+    '06:00',
+    true
+  );
+  exports.saveLocalStorage(
+    'timer',
+    '15',
+    true
+  );
   console.log(colors.green("Databse Inititalized"));
 }
 
@@ -98,4 +114,6 @@ function isJson(str) {
 }
 
 initDatabse();
+
+
 //console.log(allStorage());
