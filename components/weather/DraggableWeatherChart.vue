@@ -115,7 +115,19 @@ export default {
       this.loading = false;
     },
     sliderValue(oldVal, newVal) {
-      if (!this.loading && oldVal != newVal && newVal != null) {
+      if (!this.loading && !(oldVal == newVal) && !(newVal == "null")) {
+        if (newVal == "null") {
+          return
+        }
+        if (oldVal == "null") {
+          return
+        }
+        console.log(
+          "sliderValue",
+          "old->" + oldVal,
+          "new->" + newVal,
+          "sliderval->" + this.sliderValue
+        );
         this.saveValue(this.sliderValue);
       }
     },
@@ -133,14 +145,14 @@ export default {
   },
   methods: {
     saveValue(value) {
-      this.saveVal = value;
-      if (!this.saving && value && !this.loading && this.settings) {
+      if (!(value == null) && !this.saving && !this.loading && this.settings) {
         this.saving = true;
+        console.log("Saving", value);
         setTimeout(() => {
           axios
             .post(
               "/api/weather-settings",
-              `query=${this.settings.objectName}&value=${this.saveVal}`
+              `query=${this.settings.objectName}&value=${value}`
             )
             .then(response => {
               this.saving = false;

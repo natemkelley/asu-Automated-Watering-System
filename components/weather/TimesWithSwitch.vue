@@ -6,12 +6,12 @@
       </div>
     </v-row>
     <v-row class="mx-1" v-show="!loading">
-      <v-col cols="2" class="ml-0 pl-0">
+      <!--<v-col cols="3" class="ml-0 pl-0">
         <v-row align="center" justify="center" style="min-height: 220px;">
           <TimePicker></TimePicker>
         </v-row>
-      </v-col>
-      <v-col cols="10">
+      </v-col>-->
+      <v-col cols="12">
         <v-row class="ml-3" align="center" justify="center">
           <v-col v-for="(day,n) in chartData" :key="n">
             <strong>{{day.date | momentY}}</strong>

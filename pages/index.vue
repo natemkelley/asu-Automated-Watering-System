@@ -72,6 +72,7 @@ export default {
         .get("/api/weather-settings?query=")
         .then(response => {
           this.weatherSettings = response.data;
+          console.log(this.weatherSettings)
         })
         .catch(error => {});
     },

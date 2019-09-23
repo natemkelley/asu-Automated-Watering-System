@@ -118,7 +118,6 @@ export default {
       });
     },
     setWeatherCharts(data) {
-      console.log(data)
       this.chartTempData = {
         labels: this.createLabels(data),
         datasets: [
@@ -167,10 +166,10 @@ export default {
     checkIfActive(objectName) {
       objectName = objectName.toLowerCase();
       if (this.weatherSettings.hasOwnProperty(objectName)) {
-        return objectName, this.weatherSettings[objectName].active;
-      } else {
-        return true; //default to true I guess?
+        if (this.weatherSettings[objectName].active === "disabled")
+          return false;
       }
+      return true;
     }
   },
   computed: {

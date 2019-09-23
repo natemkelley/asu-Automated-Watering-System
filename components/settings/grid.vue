@@ -1,6 +1,6 @@
 //  v-if="category.name === settings.active"
 <template>
-  <v-container fluid style="min-height: 500px">
+  <v-container fluid style="min-height: 250px">
     <v-row v-show="loading" justify="center" align="center" class="loader">
       <div class="text-center ma-12">
         <v-progress-circular :size="80" :width="7" color="white" indeterminate></v-progress-circular>
@@ -13,7 +13,7 @@
       align="start"
       justify="start"
     >
-      <v-col md="4" v-for="category in categories" class="board-column my-n6" :key="category.name">
+      <v-col md="4" v-for="category in categories" class="board-column my-n5" :key="category.name">
         <div class="board-column-style" v-if="gridSettings">
           <div :class="'allcaps board-column-header '+ category.color">{{category.name}}</div>
           <div class="board-column-content-wrapper">
@@ -160,7 +160,6 @@ export default {
       });
     },
     startSavingGrids() {
-      console.log("saving!!!!!");
       if (!this.loading && this.ableToSave) {
         this.ableToSave = false;
         this.saveLayout(this.columnGrids).then(() => {
@@ -171,9 +170,8 @@ export default {
     },
     destoryGrid() {
       if (this.columnGrids.length) {
-        console.log(this.columnGrids);
         this.columnGrids.forEach(grid => {
-          console.log("destoryed", grid);
+          //console.log("destoryed", grid);
           grid.destroy();
         });
 

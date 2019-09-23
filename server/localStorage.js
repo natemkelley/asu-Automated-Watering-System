@@ -6,11 +6,11 @@ exports.saveLocalStorage = function(objectName, value, active) {
   if (!objectName) {
     return { error: "No object name" };
   }
-  if (!value) {
+  if ((value == 'null') || !value) {
     value = JSON.parse(localStorage.getItem(objectName)).value;
     console.log(colors.red('value', value))
   }
-  if (!active) {
+  if ((!active) || (active == 'null')) {
     active = JSON.parse(localStorage.getItem(objectName)).active
     console.log(colors.red('active', active))
   }
@@ -60,7 +60,6 @@ function initDatabse() {
   if (i < 1) {
     localStorage.setItem("temperature", "50");
     localStorage.setItem("humidity", "50");
-    localStorage.setItem("sun", "true");
     localStorage.setItem("rain", "50");
     localStorage.setItem("moisture-sensors", "50");
     i = localStorage.length;
@@ -83,12 +82,17 @@ function initDatabse() {
   );
   exports.saveLocalStorage(
     'time',
-    '06:00',
+    JSON.stringify(['06:00', '06:30']),
     true
   );
   exports.saveLocalStorage(
     'timer',
     '15',
+    true
+  );
+  exports.saveLocalStorage(
+    'current-triggers',
+    JSON.stringify(['time', 'timer']),
     true
   );
   console.log(colors.green("Databse Inititalized"));

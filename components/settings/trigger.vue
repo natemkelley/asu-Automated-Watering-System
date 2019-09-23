@@ -25,7 +25,8 @@
       </v-col>
       <v-col v-show="trigger.includes('time')">
         <v-card height="100%">
-          <v-card-text>lorem</v-card-text>
+          <v-card-title>Time Trigger</v-card-title>
+          <TimePicker />
         </v-card>
       </v-col>
       <v-col v-show="trigger.length == 0">
@@ -42,9 +43,11 @@
 
 <script>
 import axios from "axios";
+import TimePicker from '@/components/weather/TimePicker'
 
 export default {
   props: ["triggerSettings"],
+  components:{TimePicker},
   data() {
     return {
       loading: true,
@@ -71,12 +74,11 @@ export default {
     }
   },
   mounted(){
-    console.log(this.triggerSettings)
+    //console.log(this.triggerSettings)
     this.triggerSettings.forEach(element => {
         if(element.active){
             this.trigger.push(element.objectName)
         }
-        console.log(element)
     });
   }
 };
