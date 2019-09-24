@@ -9,23 +9,7 @@
     <GridComponent :gridSettings="gridSettings"></GridComponent>
 
     <v-card-actions>
-      <v-list-item class="grow">
-        <v-list-item-avatar color="grey darken-3">
-          <v-img class="elevation-6" src="https://image.flaticon.com/icons/svg/147/147144.svg"></v-img>
-        </v-list-item-avatar>
-
-        <v-list-item-content>
-          <v-list-item-title>Evan You</v-list-item-title>
-        </v-list-item-content>
-
-        <v-row align="center" justify="end">
-          <v-icon class="mr-1">mdi-heart</v-icon>
-          <span class="subheading mr-2">256</span>
-          <span class="mr-1">·</span>
-          <v-icon class="mr-1">mdi-share-variant</v-icon>
-          <span class="subheading">45</span>
-        </v-row>
-      </v-list-item>
+      <ExtraInformation :weatherSettings="weatherSettings" v-if="weatherSettings"></ExtraInformation>
     </v-card-actions>
   </v-card>
 </template>
@@ -34,14 +18,15 @@
 import colors from "vuetify/es5/util/colors";
 import GridComponent from "@/components/settings/grid";
 import TriggerComponent from "@/components/settings/trigger";
+import ExtraInformation from "@/components/settings/extraInformation";
 
 export default {
   name: "CurrentSettings",
   props: ["weatherSettings"],
-  components: { GridComponent, TriggerComponent },
+  components: { GridComponent, TriggerComponent,ExtraInformation },
   data() {
     return {
-      isOpen: false
+      isOpen: false,
     };
   },
   computed: {
@@ -56,10 +41,25 @@ export default {
     },
     gridSettings() {
       return this.weatherSettings;
-    }
+    },
   }
 };
 </script>
+
+<style >
+.theme--light.v-expansion-panels .v-expansion-panel {
+  background-color: transparent;
+  color: white;
+  box-shadow: none !important;
+}
+.v-expansion-panel::before {
+    box-shadow: none!important;
+}
+
+.theme--light.v-expansion-panels .v-expansion-panel-header .v-expansion-panel-header__icon .v-icon {
+    color: white!important;
+}
+</style>
 
 //https://haltu.github.io/muuri/
 //https://interactjs.io/

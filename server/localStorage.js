@@ -76,7 +76,7 @@ function initDatabse() {
     }
   }
   exports.saveLocalStorage(
-    'recent-updates',
+    'recentUpdates',
     JSON.stringify([{}]),
     'recent-updates'
   );
@@ -91,7 +91,7 @@ function initDatabse() {
     true
   );
   exports.saveLocalStorage(
-    'current-triggers',
+    'currentTriggers',
     JSON.stringify(['time', 'timer']),
     true
   );

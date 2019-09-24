@@ -4,7 +4,7 @@
       <v-col md="4">
         <v-card>
           <v-card-title>Current Triggers</v-card-title>
-          <v-card-text>I'm card text</v-card-text>
+          <v-card-text>Choose at least one</v-card-text>
           <v-card-actions>
             <v-select
               class="px-1 mb-n3 caps"

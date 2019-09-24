@@ -122,12 +122,7 @@ export default {
         if (oldVal == "null") {
           return
         }
-        console.log(
-          "sliderValue",
-          "old->" + oldVal,
-          "new->" + newVal,
-          "sliderval->" + this.sliderValue
-        );
+
         this.saveValue(this.sliderValue);
       }
     },
