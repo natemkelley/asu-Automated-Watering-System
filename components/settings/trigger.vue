@@ -20,7 +20,9 @@
       </v-col>
       <v-col v-show="trigger.includes('timer')">
         <v-card height="100%">
-          <v-card-text>lorem</v-card-text>
+          <v-card-title>Timer Trigger</v-card-title>
+          <v-card-text>Enter how frequently the system should run in terms of minutes with 15 being the lowest.</v-card-text>
+          <TimerPicker />
         </v-card>
       </v-col>
       <v-col v-show="trigger.includes('time')">
@@ -44,10 +46,11 @@
 <script>
 import axios from "axios";
 import TimePicker from '@/components/weather/TimePicker'
+import TimerPicker from '@/components/settings/timer'
 
 export default {
   props: ["triggerSettings"],
-  components:{TimePicker},
+  components:{TimePicker, TimerPicker},
   data() {
     return {
       loading: true,
