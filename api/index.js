@@ -1,10 +1,13 @@
 const express = require("express");
 const app = express();
 const axios = require("axios");
-const localStorage = require("../server/localStorage.js");
 const moment = require("moment");
 const bodyParser = require("body-parser");
 import { getSunrise, getSunset } from "sunrise-sunset-js";
+
+//these are custom files used to write to a stratch space and talk to the raspberry pi
+const localStorage = require("../server/localStorage.js");
+const raspberryPi = require('./raspberryPi.js');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -87,20 +90,6 @@ app.get("/weather-settings", async (req, res, next) => {
   res.json(localStorage.getLocalStorage(req.query.query));
 });
 
-app.get("/random-movie", async (req, res, next) => {
-  const movieOptions = ["tt3896198", "tt0071253", "tt0000111"];
-  var movieID = "tt" + Math.round(Math.random() * 9999999);
-  var movie = await axios.get(
-    `https://www.omdbapi.com/?i=${movieID}&apikey=9733f1df`
-  );
-  if (movie.data.Error) {
-    movieID = movieOptions[Math.floor(Math.random() * movieOptions.length)];
-    movie = await axios.get(
-      `https://www.omdbapi.com/?i=${movieID}&apikey=9733f1df`
-    );
-  }
-  res.json(movie.data);
-});
 
 // export the server middleware
 module.exports = {

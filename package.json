@@ -33,6 +33,7 @@
     "muuri": "^0.8.0",
     "node-localstorage": "^1.3.1",
     "nuxt": "^2.0.0",
+    "rpi-gpio": "^2.1.4",
     "sunrise-sunset-js": "^2.1.1",
     "underscore": "^1.9.1",
     "vue-chartjs": "^3.4.2",
