@@ -1,5 +1,5 @@
 <template>
-  <v-card class="moisture">
+  <v-card class="moisture" height="100%">
     <v-card-title>Moisture Sensors</v-card-title>
     <v-data-table
       @click:row="checkSettings"

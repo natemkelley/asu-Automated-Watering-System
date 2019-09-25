@@ -15,7 +15,7 @@
             <Weather :weatherSettings="weatherSettings" :weather="weather"></Weather>
           </v-col>
         </v-row>
-        <v-row align="center">
+        <v-row align="stretch" justify="start">
           <v-col>
             <MoistureSensors :weatherSettings="weatherSettings"></MoistureSensors>
           </v-col>
