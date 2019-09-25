@@ -90,6 +90,19 @@ app.get("/weather-settings", async (req, res, next) => {
   res.json(localStorage.getLocalStorage(req.query.query));
 });
 
+app.get("/moisture-status", async (req, res, next) => {
+  res.json(localStorage.getLocalStorage('moistureSensors'));
+});
+
+app.post("/moisture-status", async (req, res, next) => {
+  localStorage.saveLocalStorage('moistureSensors', req.body.value);
+  res.json(localStorage.getLocalStorage('moistureSensors'));
+});
+
+app.get("/recent-updates", async (req, res, next) => {
+  res.json({stauts:true});
+});
+
 
 // export the server middleware
 module.exports = {

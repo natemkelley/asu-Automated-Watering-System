@@ -24,7 +24,7 @@
                 :objectname="setting.objectName"
                 :key="setting.objectName"
               >
-                <div class="board-item-content caps">{{setting.objectName}} - {{setting.active}}</div>
+                <div class="board-item-content caps">{{setting.objectName | kebabCase}} - {{setting.active}}</div>
               </div>
             </div>
           </div>
@@ -201,6 +201,12 @@ export default {
       }
       return false;
     }
+  },
+  filters: {
+    kebabCase: function(text) {
+      var result = text.replace(/([A-Z])/g, " $1");
+      return result.charAt(0).toUpperCase() + result.slice(1);
+    }
   }
 };
 </script>
@@ -241,9 +247,9 @@ export default {
   background: #f0f0f0;
   border-radius: 3px;
   z-index: 1;
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
+  border-radius: 4px;
 }
 
 .board-column.muuri-item-releasing {

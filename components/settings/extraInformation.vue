@@ -36,7 +36,6 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      console.log("hereeeee");
       this.loading = false;
     }, 1000);
   },

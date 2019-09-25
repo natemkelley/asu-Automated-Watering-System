@@ -4,7 +4,7 @@
       <v-icon large left>mdi-tune</v-icon>
       <span class="title font-weight-light">Current Status</span>
     </v-card-title>
-
+ 
     <v-card-text
       class="headline font-weight-bold"
     >"Turns out semicolon-less style is easier and safer in TS because most gotcha edge cases are type invalid as well."</v-card-text>

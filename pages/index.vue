@@ -17,7 +17,7 @@
         </v-row>
         <v-row align="center">
           <v-col>
-            <MoistureSensors></MoistureSensors>
+            <MoistureSensors :weatherSettings="weatherSettings"></MoistureSensors>
           </v-col>
           <v-col>
             <CurrentStatus></CurrentStatus>
@@ -72,7 +72,7 @@ export default {
         .get("/api/weather-settings?query=")
         .then(response => {
           this.weatherSettings = response.data;
-          console.log(this.weatherSettings)
+          //console.log(this.weatherSettings)
         })
         .catch(error => {});
     },
@@ -86,7 +86,6 @@ export default {
     this.getSettings();
     this.getWeather();
     this.$store.subscribe((mutation, state) => {
-      console.log(state.refresh);
       this.getSettings();
     });
   }
