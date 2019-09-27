@@ -21,7 +21,6 @@ app.get("/current-weather", async (req, res, next) => {
   var weather = await axios.get(
     `http://api.openweathermap.org/data/2.5/weather?q=Phoenix&appid=${access}&units=imperial`
   );
-  localStorage.saveLocalStorage("current-weather", weather.data);
   res.json(weather.data);
 });
 
@@ -102,7 +101,6 @@ app.post("/moisture-status", async (req, res, next) => {
 app.get("/recent-updates", async (req, res, next) => {
   res.json({stauts:true});
 });
-
 
 // export the server middleware
 module.exports = {

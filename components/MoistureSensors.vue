@@ -19,7 +19,7 @@
         width="100%"
         class="mx-1"
       >Moisture sensors have been disabled.</v-alert>
-      <v-row v-if="!disabled && !loading" class="mx-1">
+      <v-row v-if="!disabled && !loading" class="mx-1 mt-4">
         <v-col cols="12" class="pa-0">
           <v-select
             @change="saveValue"
@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     checkSettings(val) {
-      console.log(this.weatherSettings);
+      //console.log(this.weatherSettings);
     },
     getSettings() {
       this.loading = true;
@@ -89,8 +89,8 @@ export default {
         axios
           .post("/api/moisture-status", `&value=${value}`)
           .then(response => {
-            console.log(response.data);
             this.getSettings();
+            this.$store.commit("triggerRefresh"); //this will trigger a refresh
           })
           .catch(error => {
             console.error(error);
@@ -130,7 +130,7 @@ export default {
         element.timestamp = moment(new Date(element.timestamp)).format("lll");
         arr.push(element);
       });
-
+      console.log(arr)
       return arr;
     },
     disabled() {
@@ -149,7 +149,6 @@ export default {
         bar.push(n + 1);
       });
 
-      console.log(bar);
       return bar;
     }
   }

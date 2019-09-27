@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "Timer",
   data() {
@@ -37,7 +39,31 @@ export default {
       } else if (this.number > this.max) {
         this.number = this.max;
       }
+      this.startSavingValue(val);
+    },
+    startSavingValue(value) {
+      this.saveValue("timer", value);
+    },
+    saveValue(objectName, value, active) {
+      return new Promise(resolve => {
+        axios
+          .post("/api/weather-settings", `query=${objectName}&value=${value}`)
+          .then(response => {
+            resolve(response.data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      });
     }
+  },
+  mounted() {
+    axios
+      .get("/api/weather-settings?query=timer")
+      .then(response => {
+        this.number = response.data.value;
+      })
+      .catch(error => {});
   }
 };
 </script>

@@ -44,7 +44,7 @@
 
 <script>
 import axios from "axios";
-
+import moment from "moment";
 export default {
   data() {
     return {
@@ -74,6 +74,7 @@ export default {
           this.$refs.dialog.save(value);
           this.modal2 = false;
           this.getTime();
+          this.$store.commit("triggerRefresh"); //this will trigger a refresh
         })
         .catch(error => {
           this.saving = false;
@@ -88,6 +89,7 @@ export default {
           } else {
             this.time = null;
             this.chips = JSON.parse(response.data.value);
+            this.sortChips();
           }
           this.loading = false;
         })
@@ -105,11 +107,23 @@ export default {
           this.$refs.dialog.save(value);
           this.modal2 = false;
           this.getTime();
+          this.$store.commit("triggerRefresh"); //this will trigger a refresh
         })
         .catch(error => {
           this.saving = false;
         });
+    },
+    sortChips() {
+      var today = moment(new Date()).format("YYYY/MM/DD");
+      this.chips.sort(function(a, b) {
+        return new Date(today + " " + a) - new Date(today + " " + b);
+      });
     }
   }
 };
 </script>
+
+                        var x = JSON.parse(response.data.value).sort(function(a, b) {
+              return new Date(today + " " + a) - new Date(today + " " + b);
+            });
+            console.log(x)

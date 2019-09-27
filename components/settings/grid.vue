@@ -24,7 +24,7 @@
                 :objectname="setting.objectName"
                 :key="setting.objectName"
               >
-                <div class="board-item-content caps">{{setting.objectName | kebabCase}} - {{setting.active}}</div>
+                <div class="board-item-content caps">{{setting.objectName | kebabCase}}</div>
               </div>
             </div>
           </div>

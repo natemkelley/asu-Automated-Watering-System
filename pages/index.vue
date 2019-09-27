@@ -16,11 +16,11 @@
           </v-col>
         </v-row>
         <v-row align="stretch" justify="start">
-          <v-col>
+          <v-col cols="5">
             <MoistureSensors :weatherSettings="weatherSettings"></MoistureSensors>
           </v-col>
-          <v-col>
-            <CurrentStatus></CurrentStatus>
+          <v-col cols="7">
+            <CurrentStatus :weatherSettings="weatherSettings"></CurrentStatus>
           </v-col>
         </v-row>
         <v-row align="center">

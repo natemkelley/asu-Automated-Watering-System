@@ -14,6 +14,7 @@
               label="Triggers"
               multiple
               outlined
+              @change="startSavingValue"
             ></v-select>
           </v-card-actions>
         </v-card>
@@ -32,12 +33,12 @@
         </v-card>
       </v-col>
       <v-col v-show="trigger.length == 0">
-          <v-alert
-            prominent
-            width="100%"
-            border="left"
-            type="error"
-          >You should have at least Time or Timer enabled. The automation pipeline has been disabled</v-alert>
+        <v-alert
+          prominent
+          width="100%"
+          border="left"
+          type="error"
+        >You should have at least Time or Timer enabled. The automation pipeline has been disabled</v-alert>
       </v-col>
     </v-row>
   </v-container>
@@ -45,12 +46,12 @@
 
 <script>
 import axios from "axios";
-import TimePicker from '@/components/weather/TimePicker'
-import TimerPicker from '@/components/settings/timer'
+import TimePicker from "@/components/weather/TimePicker";
+import TimerPicker from "@/components/settings/timer";
 
 export default {
   props: ["triggerSettings"],
-  components:{TimePicker, TimerPicker},
+  components: { TimePicker, TimerPicker },
   data() {
     return {
       loading: true,
@@ -59,6 +60,15 @@ export default {
     };
   },
   methods: {
+    startSavingValue(values, x, y) {
+      this.triggerSettings.forEach(setting => {
+        if (values.includes(setting.objectName)) {
+          this.saveValue(setting.objectName,(setting.value),true);
+        } else {
+          this.saveValue(setting.objectName,(setting.value),false);
+        }
+      });
+    },
     saveValue(objectName, value, active) {
       return new Promise(resolve => {
         axios
@@ -67,8 +77,7 @@ export default {
             `query=${objectName}&value=${value}&active=${active}`
           )
           .then(response => {
-            //console.log(response.data);
-            resolve(response.data);
+              this.$store.commit("triggerRefresh"); //this will trigger a refresh
           })
           .catch(error => {
             console.error(error);
@@ -76,12 +85,11 @@ export default {
       });
     }
   },
-  mounted(){
-    //console.log(this.triggerSettings)
+  mounted() {
     this.triggerSettings.forEach(element => {
-        if(element.active){
-            this.trigger.push(element.objectName)
-        }
+      if (element.active == 'true') {
+        this.trigger.push(element.objectName);
+      }
     });
   }
 };

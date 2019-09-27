@@ -151,6 +151,7 @@ export default {
             )
             .then(response => {
               this.saving = false;
+              this.$store.commit("triggerRefresh"); //this will trigger a refresh
             })
             .catch(error => {
               this.saving = false;
