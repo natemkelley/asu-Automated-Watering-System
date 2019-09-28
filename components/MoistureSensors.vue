@@ -28,7 +28,7 @@
             label="Select"
             v-model="defaultSelected"
             :items="arrayOfSensors"
-            hint="Number of sensors that must be moist"
+            hint="Number of sensors that must be NOT moist"
             outlined
           ></v-select>
         </v-col>
@@ -60,27 +60,10 @@ export default {
       defaultSelected: null
     };
   },
-  mounted() {
-    this.getSettings();
-  },
+  mounted() {},
   methods: {
     checkSettings(val) {
       //console.log(this.weatherSettings);
-    },
-    getSettings() {
-      this.loading = true;
-      return new Promise(resolve => {
-        axios
-          .get("/api/moisture-status")
-          .then(response => {
-            this.rawSensorData = JSON.parse(response.data.value);
-            this.loading = false;
-            this.defaultSelected = this.getActiveMoistureSensors();
-          })
-          .catch(error => {
-            console.error(error);
-          });
-      });
     },
     saveValue(number) {
       console.log("saving", number);
@@ -89,7 +72,6 @@ export default {
         axios
           .post("/api/moisture-status", `&value=${value}`)
           .then(response => {
-            this.getSettings();
             this.$store.commit("triggerRefresh"); //this will trigger a refresh
           })
           .catch(error => {
@@ -127,10 +109,9 @@ export default {
 
       var arr = [];
       this.rawSensorData.forEach(element => {
-        element.timestamp = moment(new Date(element.timestamp)).format("lll");
+        element.timestamp = moment(new Date(element.lastRunTime)).format("lll");
         arr.push(element);
       });
-      console.log(arr)
       return arr;
     },
     disabled() {
@@ -150,6 +131,15 @@ export default {
       });
 
       return bar;
+    }
+  },
+  watch: {
+    weatherSettings() {
+      this.rawSensorData = JSON.parse(
+        this.weatherSettings.moistureSensors.value
+      );
+      this.loading = false;
+      this.defaultSelected = this.getActiveMoistureSensors();
     }
   }
 };

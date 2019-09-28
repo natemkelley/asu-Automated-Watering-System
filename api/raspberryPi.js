@@ -31,14 +31,14 @@ function myTimer() {
   console.log(t);
 }
 
-exports = {
-  getSystemStatus: () => {
-    return "Hello";
-  },
-
-  setSystemPipeline: () => {
-    return "Hello";
-  }
+exports.systemCheck = function() {
+  return new Promise(function(resolve, reject) {
+    console.log("system checking... raspberry pi");
+    localStorage.systemCheckComplete().then(()=>{
+      console.log('i am here.');
+      resolve(true);
+    })
+  });
 };
 
 function logSystemStatus() {

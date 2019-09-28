@@ -1,15 +1,25 @@
 <template>
   <v-card height="100%">
     <v-card-title>Current Status</v-card-title>
-    <v-card-text>Last system check was {{lastCheck}}</v-card-text>
+    <v-card-text>
+      And: ({{willRun.andActive}}/{{willRun.andCounts}}),
+      Or: ({{willRun.orActive}}/{{willRun.orCounts}})
+      <strong style="float:right" v-bind:class="[willRun.status ? 'activeStatus' : 'inactiveStatus']">The system will {{willRun.text}} on next trigger</strong>
+    </v-card-text>
 
     <v-simple-table class="px-2" dense fixed-header height="240px">
       <template v-slot:default>
-        <tbody>
+        <thead>
           <tr>
             <th v-for="head in headers" :key="head" class="text-left">{{head}}</th>
           </tr>
-          <tr v-for="(setting,n) in currentStati" :key="n">
+        </thead>
+        <tbody>
+          <tr
+            v-for="(setting,n) in currentStati"
+            :key="n"
+            v-bind:class="[setting.status.toLowerCase(),setting.operand.toLowerCase()]"
+          >
             <td>{{ setting.name }}</td>
             <td>{{ setting.level }}</td>
             <td class="capitalize">{{ setting.threshhold }}</td>
@@ -63,6 +73,49 @@ export default {
     this.updateCurrentTime();
   },
   computed: {
+    willRun() {
+      let andCounts = 0;
+      let orCounts = 0;
+      let thetotal = 0;
+      let andActive = 0;
+      let orActive = 0;
+      let status = null;
+      let text = "will not run";
+      //console.log(this.currentStati);
+      this.currentStati.forEach(el => {
+        if (el.operand == "and" || el.operand == "or") {
+          thetotal++;
+        }
+        if (el.operand == "and") {
+          andCounts++;
+          //console.log(el);
+          if (el.status == "Activated") {
+            andActive++;
+          }
+        }
+        if (el.operand == "or") {
+          orCounts++;
+          if (el.status == "Activated") {
+            orActive++;
+          }
+        }
+      });
+
+      if (orActive > 0 || andCounts === andActive) {
+        status = true;
+        text = "will run";
+      }
+
+      return {
+        andActive: andActive,
+        andCounts: andCounts,
+        orCounts: orCounts,
+        orActive: orActive,
+        total: thetotal,
+        status: status,
+        text: text
+      };
+    },
     color() {
       return colors.green.darken1;
     },
@@ -79,7 +132,7 @@ export default {
         level: "Check " + this.getCountDownForTime(),
         threshhold: JSON.parse(this.weatherSettings.time.value).join(", "),
         operand:
-          this.weatherSettings.time.active == "true" ? "Active" : "Inactive",
+          this.weatherSettings.time.active == "true" ? "Activated" : "Inactive",
         status:
           this.weatherSettings.time.active == "true" ? "Running" : "Stopped"
       });
@@ -87,10 +140,12 @@ export default {
       //timer
       returnArray.push({
         name: "Timer",
-        level: "...",
+        level: this.getTimer(),
         threshhold: "Every " + this.weatherSettings.timer.value + " minutes",
         operand:
-          this.weatherSettings.timer.active == "true" ? "Active" : "Inactive",
+          this.weatherSettings.timer.active == "true"
+            ? "Activated"
+            : "Inactive",
         status:
           this.weatherSettings.timer.active == "true" ? "Running" : "Stopped"
       });
@@ -101,35 +156,69 @@ export default {
         level: Math.round(Number(this.weather.main.temp)),
         threshhold: Math.round(Number(this.weatherSettings.temperature.value)),
         operand: this.weatherSettings.temperature.active,
-        status: this.returnStatus(this.weatherSettings.temperature.active, Math.round(Number(this.weather.main.temp)),Math.round(Number(this.weatherSettings.temperature.value)),false) ? 'Active' : 'Inactive'
+        status: this.returnStatus(
+          this.weatherSettings.temperature.active,
+          Math.round(Number(this.weather.main.temp)),
+          Math.round(Number(this.weatherSettings.temperature.value)),
+          false
+        )
+          ? "Activated"
+          : "Inactive"
       });
       returnArray.push({
         name: "% of Rain",
-        level: Math.round(Number(this.weather.clouds.all)) +"%",
-        threshhold: Math.round(Number(this.weatherSettings.rain.value)) +"%",
+        level: Math.round(Number(this.weather.clouds.all)) + "%",
+        threshhold: Math.round(Number(this.weatherSettings.rain.value)) + "%",
         operand: this.weatherSettings.rain.active,
-        status: this.returnStatus(this.weatherSettings.rain.active, Math.round(Number(this.weather.clouds.all)),Math.round(Number(this.weatherSettings.rain.value)),true) ? 'Active' : 'Inactive'
+        status: this.returnStatus(
+          this.weatherSettings.rain.active,
+          Math.round(Number(this.weather.clouds.all)),
+          Math.round(Number(this.weatherSettings.rain.value)),
+          true
+        )
+          ? "Activated"
+          : "Inactive"
       });
       returnArray.push({
         name: "Humidity",
-        level: Math.round(Number(this.weather.main.humidity)) +"%",
-        threshhold: Math.round(Number(this.weatherSettings.humidity.value)) +'%',
+        level: Math.round(Number(this.weather.main.humidity)) + "%",
+        threshhold:
+          Math.round(Number(this.weatherSettings.humidity.value)) + "%",
         operand: this.weatherSettings.humidity.active,
-        status: this.returnStatus(this.weatherSettings.humidity.active, Math.round(Number(this.weather.main.humidity)),Math.round(Number(this.weatherSettings.humidity.value)),true) ? 'Active' : 'Inactive'
+        status: this.returnStatus(
+          this.weatherSettings.humidity.active,
+          Math.round(Number(this.weather.main.humidity)),
+          Math.round(Number(this.weatherSettings.humidity.value)),
+          true
+        )
+          ? "Activated"
+          : "Inactive"
       });
       returnArray.push({
         name: "Moisture Sensors",
         level: this.getNumMoistureSensors(),
         threshhold: this.getReqMoistureSensors(),
         operand: this.weatherSettings.moistureSensors.active,
-        status: this.returnStatus(this.weatherSettings.moistureSensors.active, this.getNumMoistureSensors(),this.getReqMoistureSensors(),false) ? 'Active' : 'Inactive'
+        status: this.returnStatus(
+          this.weatherSettings.moistureSensors.active,
+          this.getNumMoistureSensors(),
+          this.getReqMoistureSensors(),
+          false
+        )
+          ? "Activated"
+          : "Inactive"
       });
-
 
       return returnArray;
     }
   },
   methods: {
+    getTimer() {
+      var future = moment(new Date(this.weatherSettings.timer.lastRunTime))
+        .add(Number(this.weatherSettings.timer.value), "minutes")
+        .fromNow();
+      return "Check " + future;
+    },
     returnStatus(active, value, threshhold, lowerbound) {
       if (active == "disabled") {
         return false;
@@ -177,9 +266,10 @@ export default {
     check() {
       this.loading = true;
       setTimeout(() => {
-        this.loading = false;
-        console.log(this.weatherSettings);
-        console.log(this.weather);
+        axios.get(`http://localhost:3000/api/system-check`).then(res => {
+          this.$store.commit("triggerRefresh"); //this will trigger a refresh
+          this.loading = false;
+        });
       }, 1000);
     },
     getCurrentWeather() {
@@ -194,20 +284,24 @@ export default {
     },
     getReqMoistureSensors() {
       var count = 0;
-      JSON.parse(this.weatherSettings.moistureSensors.value).forEach((el, n) => {
-        if (el.mustBeTrue == true) {
-          count++;
+      JSON.parse(this.weatherSettings.moistureSensors.value).forEach(
+        (el, n) => {
+          if (el.mustBeTrue == true) {
+            count++;
+          }
         }
-      });
+      );
       return count;
     },
     getNumMoistureSensors() {
       var count = 0;
-      JSON.parse(this.weatherSettings.moistureSensors.value).forEach((el, n) => {
-        if (el.moist == 'true' || el.moist == true) {
-          count++;
+      JSON.parse(this.weatherSettings.moistureSensors.value).forEach(
+        (el, n) => {
+          if (el.moist == "true" || el.moist == true) {
+            count++;
+          }
         }
-      });
+      );
       return count;
     }
   }
@@ -215,12 +309,28 @@ export default {
 </script>
 
 <style scoped>
-.capitalize {
-  text-transform: capitalize;
+.activeStatus{
+  color: green
+}
+.inactiveStatus{
+  color: rgb(204, 0, 0)
 }
 
-table {
+.fixed_header {
+  width: 400px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.fixed_header tbody {
+  display: block;
   width: 100%;
+  overflow: auto;
+  height: 100px;
+}
+
+.fixed_header thead tr {
+  display: block;
 }
 
 th {
@@ -237,6 +347,28 @@ th {
 
 tr:nth-child(even) {
   background-color: #fcfcfc;
+}
+
+.activated {
+  background: rgba(0, 128, 0, 0.06) !important;
+}
+
+.inactive,
+.running {
+  background: white !important;
+}
+.disabled,
+.stopped {
+  /*background: rgba(128, 128, 128, 0.423) !important;*/
+  color: rgba(27, 27, 27, 0.909);
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+table {
+  width: 100%;
 }
 
 .put-to-bottom {

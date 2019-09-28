@@ -50,6 +50,7 @@ export default {
           .post("/api/weather-settings", `query=${objectName}&value=${value}`)
           .then(response => {
             resolve(response.data);
+            this.$store.commit("triggerRefresh"); //this will trigger a refresh
           })
           .catch(error => {
             console.error(error);

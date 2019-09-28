@@ -4,16 +4,23 @@ const axios = require("axios");
 const moment = require("moment");
 const bodyParser = require("body-parser");
 import { getSunrise, getSunset } from "sunrise-sunset-js";
+import colors from "vuetify/es5/util/colors";
 
 //these are custom files used to write to a stratch space and talk to the raspberry pi
 const localStorage = require("../server/localStorage.js");
-const raspberryPi = require('./raspberryPi.js');
+const raspberryPi = require("./raspberryPi.js");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get("/", (req, res, next) => {
   res.json({ status: true });
+});
+
+app.get("/system-check", async (req, res, next) => {
+  console.log("system check api");
+  var x = await raspberryPi.systemCheck();
+  res.json({ status: x });
 });
 
 app.get("/current-weather", async (req, res, next) => {
@@ -74,7 +81,11 @@ app.get("/weather", async (req, res, next) => {
 });
 
 app.post("/weather-settings", async (req, res, next) => {
-  let value = localStorage.saveLocalStorage(req.body.query, req.body.value, req.body.active);
+  let value = localStorage.saveLocalStorage(
+    req.body.query,
+    req.body.value,
+    req.body.active
+  );
   if (value.error === false) {
     res.json(value);
   } else {
@@ -90,16 +101,16 @@ app.get("/weather-settings", async (req, res, next) => {
 });
 
 app.get("/moisture-status", async (req, res, next) => {
-  res.json(localStorage.getLocalStorage('moistureSensors'));
+  res.json(localStorage.getLocalStorage("moistureSensors"));
 });
 
 app.post("/moisture-status", async (req, res, next) => {
-  localStorage.saveLocalStorage('moistureSensors', req.body.value);
-  res.json(localStorage.getLocalStorage('moistureSensors'));
+  localStorage.saveLocalStorage("moistureSensors", req.body.value);
+  res.json(localStorage.getLocalStorage("moistureSensors"));
 });
 
 app.get("/recent-updates", async (req, res, next) => {
-  res.json({stauts:true});
+  res.json({ stauts: true });
 });
 
 // export the server middleware

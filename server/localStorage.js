@@ -2,17 +2,15 @@ var colors = require("colors");
 var LocalStorage = require("node-localstorage").LocalStorage;
 var localStorage = new LocalStorage("./scratch");
 
-exports.saveLocalStorage = function(objectName, value, active, name) {
+exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
   if (!objectName) {
     return { error: "No object name" };
   }
   if (value == "null" || !value) {
     value = JSON.parse(localStorage.getItem(objectName)).value;
-    console.log(colors.red("value", value));
   }
   if (!active || active == "null") {
     active = JSON.parse(localStorage.getItem(objectName)).active;
-    console.log(colors.red("active", active));
   }
 
   console.log(
@@ -32,6 +30,7 @@ exports.saveLocalStorage = function(objectName, value, active, name) {
       value: value,
       active: active || "and",
       error: false,
+      lastRunTime: lastRunTime || new Date()
     })
   );
   return localStorage.getItem(objectName);
@@ -83,43 +82,45 @@ function initDatabse() {
       );
     }
   }
-  exports.saveLocalStorage(
-    "recentUpdates",
-    JSON.stringify([{}]),
-    "recent-updates"
-  );
-  exports.saveLocalStorage(
-    "moistureSensors",
-    JSON.stringify([
-      {
-        sensor: "Sensor 1",
-        moist: "true",
-        timestamp: String(new Date()),
-        mustBeTrue: "false"
-      },
-      {
-        sensor: "Sensor 2",
-        moist: "true",
-        timestamp: String(new Date()),
-        mustBeTrue: "true"
-      },
-      {
-        sensor: "Sensor 3",
-        moist: "true",
-        timestamp: String(new Date()),
-        mustBeTrue: "false"
-      }
-    ]),
-    "and"
-  );
-  exports.saveLocalStorage("time", JSON.stringify(["06:00", "06:30"]), true);
-  exports.saveLocalStorage("timer", "15", true);
-  exports.saveLocalStorage(
-    "currentTriggers",
-    JSON.stringify(["time", "timer"]),
-    true
-  );
-  console.log(colors.green("Databse Inititalized"));
+  if (localStorage.length < 4) {
+    exports.saveLocalStorage(
+      "recentUpdates",
+      JSON.stringify([{}]),
+      "recent-updates"
+    );
+    exports.saveLocalStorage(
+      "moistureSensors",
+      JSON.stringify([
+        {
+          sensor: "Sensor 1",
+          moist: "true",
+          lastRunTime: String(new Date()),
+          mustBeTrue: "false"
+        },
+        {
+          sensor: "Sensor 2",
+          moist: "false",
+          lastRunTime: String(new Date()),
+          mustBeTrue: "true"
+        },
+        {
+          sensor: "Sensor 3",
+          moist: "true",
+          lastRunTime: String(new Date()),
+          mustBeTrue: "false"
+        }
+      ]),
+      "and"
+    );
+    exports.saveLocalStorage("time", JSON.stringify(["06:00", "06:30"]), true);
+    exports.saveLocalStorage("timer", "15", true);
+    exports.saveLocalStorage(
+      "currentTriggers",
+      JSON.stringify(["time", "timer"]),
+      true
+    );
+    console.log(colors.green("Databse Inititalized"));
+  }
 }
 
 function getActiveStatue(objectName) {
@@ -141,6 +142,23 @@ function isJson(str) {
   return true;
 }
 
-initDatabse();
+exports.systemCheckComplete = function() {
+  return new Promise(function(resolve, reject) {
+    console.log("systemCheckComplete");
+    var allStors = allStorage();
+    var nowTime = new Date();
+    for (var key in allStors) {
+      if (allStors.hasOwnProperty(key)) {
+        //console.log(allStors[key].objectName);
+        exports.saveLocalStorage(allStors[key].objectName);
+      }
+    }
+
+    resolve(true);
+  });
+};
+
+//initDatabse();
+exports.systemCheckComplete();
 
 //console.log(allStorage());
