@@ -44,7 +44,7 @@ import axios from "axios";
 
 export default {
   name: "MoistureSensors",
-  props: ["weatherSettings"],
+  props: ["weatherSettings","color"],
   data() {
     return {
       headers: [

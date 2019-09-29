@@ -22,7 +22,7 @@ import ExtraInformation from "@/components/settings/extraInformation";
 
 export default {
   name: "CurrentSettings",
-  props: ["weatherSettings"],
+  props: ["weatherSettings","color"],
   components: { GridComponent, TriggerComponent,ExtraInformation },
   data() {
     return {
@@ -30,9 +30,6 @@ export default {
     };
   },
   computed: {
-    color() {
-      return colors.green.darken1;
-    },
     triggerSettings() {
       if (!this.weatherSettings.time || !this.weatherSettings.timer) {
         return false;

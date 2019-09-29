@@ -79,7 +79,7 @@ import TimesWithSwitch from "@/components/weather/TimesWithSwitch";
 
 export default {
   name: "Weather",
-  props: ["weatherSettings", "weather"],
+  props: ["weatherSettings", "weather","color"],
   components: { DraggableWeatherChart, TimesWithSwitch },
   data() {
     return {
@@ -170,11 +170,6 @@ export default {
           return false;
       }
       return true;
-    }
-  },
-  computed: {
-    color() {
-      return colors.green.darken1;
     }
   },
   watch: {

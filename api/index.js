@@ -34,6 +34,10 @@ app.get("/current-weather", async (req, res, next) => {
   var weather = await axios.get(
     `http://api.openweathermap.org/data/2.5/weather?q=Phoenix&appid=${access}&units=imperial`
   );
+  var futureweather = await axios.get(
+    `http://api.openweathermap.org/data/2.5/forecast?q=Phoenix&appid=${access}&units=imperial&mode=json`
+  );
+  weather.data.futureweather = futureweather.data;
   res.json(weather.data);
 });
 

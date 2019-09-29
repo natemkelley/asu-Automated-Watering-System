@@ -1,18 +1,18 @@
 <template>
   <v-app>
     <MySidebar></MySidebar>
-    <TopBar></TopBar>
+    <TopBar :color="color"></TopBar>
 
     <v-content class="mx-3">
       <v-container fluid>
         <v-row align="center">
           <v-col>
-            <CurrentSettings :weatherSettings="weatherSettings"></CurrentSettings>
+            <CurrentSettings :color="color" :weatherSettings="weatherSettings"></CurrentSettings>
           </v-col>
         </v-row>
         <v-row align="center">
           <v-col>
-            <Weather :weatherSettings="weatherSettings" :weather="weather"></Weather>
+            <Weather :color="color" :weatherSettings="weatherSettings" :weather="weather"></Weather>
           </v-col>
         </v-row>
         <v-row align="stretch" justify="start">
@@ -20,7 +20,7 @@
             <MoistureSensors :weatherSettings="weatherSettings"></MoistureSensors>
           </v-col>
           <v-col cols="7">
-            <CurrentStatus :weatherSettings="weatherSettings"></CurrentStatus>
+            <CurrentStatus :color="color" :weatherSettings="weatherSettings"></CurrentStatus>
           </v-col>
         </v-row>
         <v-row align="center">
@@ -45,6 +45,7 @@ import MoistureSensors from "@/components/MoistureSensors";
 import CurrentStatus from "@/components/CurrentStatus";
 import Weather from "@/components/Weather";
 import RecentUpdates from "@/components/RecentUpdates";
+import colors from "vuetify/es5/util/colors";
 
 export default {
   components: {
@@ -56,6 +57,11 @@ export default {
     CurrentStatus,
     Weather,
     RecentUpdates
+  },
+    computed: {
+    color() {
+      return colors.blue.darken2;
+    }
   },
   data() {
     return {

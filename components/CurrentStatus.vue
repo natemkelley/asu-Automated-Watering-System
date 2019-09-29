@@ -33,7 +33,8 @@
     <div class="pb-4 pt-2 px-3">
       <v-btn
         block
-        color="green darken-1 white--text"
+        :dark="!loading"
+        :color="color"
         depressed
         :loading="loading"
         :disabled="loading"
@@ -57,7 +58,7 @@ import moment from "moment";
 
 export default {
   name: "CurrentStatus",
-  props: ["weatherSettings"],
+  props: ["weatherSettings","color"],
   data() {
     return {
       headers: ["Name", "Current Level", "Threshhold(s)", "Operand", "Status"],
@@ -116,9 +117,6 @@ export default {
         text: text
       };
     },
-    color() {
-      return colors.green.darken1;
-    },
     currentStati() {
       if (!this.weatherSettings.temperature || !this.weather) {
         return [];
@@ -165,16 +163,17 @@ export default {
           ? "Activated"
           : "Inactive"
       });
+      console.log(this.weather)
       returnArray.push({
         name: "% of Rain",
-        level: Math.round(Number(this.weather.clouds.all)) + "%",
+        level: Math.round(this.weather.futureweather.list[0].clouds.all) + "%",
         threshhold: Math.round(Number(this.weatherSettings.rain.value)) + "%",
         operand: this.weatherSettings.rain.active,
         status: this.returnStatus(
           this.weatherSettings.rain.active,
-          Math.round(Number(this.weather.clouds.all)),
+          Math.round(Number(this.weather.futureweather.list[0].clouds.all)),
           Math.round(Number(this.weatherSettings.rain.value)),
-          true
+          false
         )
           ? "Activated"
           : "Inactive"

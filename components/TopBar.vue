@@ -7,12 +7,12 @@
     <v-btn
       :dark="!loading"
       v-show="!areyousure"
-      color="green darken-1"
+      :color="color"
       :loading="loading"
       :disabled="loading"
       @click="checkIfForceSystemRun()"
     >
-      <v-icon>mdi-magnify</v-icon>Force System Run
+      Force System Run
     </v-btn>
     <v-btn
       v-show="areyousure"
@@ -26,9 +26,10 @@
 
 <script>
 import axios from "axios";
-
+ 
 export default {
   name: "TopBar",
+  props:['color'],
   data() {
     return {
       loading: false,
@@ -38,13 +39,14 @@ export default {
   },
   methods: {
     forceSystemRun() {
-    this.loading = true;
-    this.disabled = true;
+      this.loading = true;
+      this.disabled = true;
 
       axios.get(`http://localhost:3000/api/force-system-run`).then(res => {
         this.$store.commit("triggerRefresh"); //this will trigger a refresh
         this.loading = false;
-            this.disabled = false;
+        this.disabled = false;
+        alert('Force system to run')
       });
     },
     checkIfForceSystemRun() {
