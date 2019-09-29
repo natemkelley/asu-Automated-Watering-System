@@ -158,7 +158,15 @@ exports.systemCheckComplete = function() {
   });
 };
 
-//initDatabse();
-exports.systemCheckComplete();
+exports.logSystemRun = function() {
+  return new Promise(function(resolve, reject) {
+    console.log('local log system run')
+
+    resolve(true);
+  });
+};
+
+initDatabse();
+//exports.systemCheckComplete();
 
 //console.log(allStorage());

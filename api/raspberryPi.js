@@ -35,12 +35,21 @@ exports.systemCheck = function() {
   return new Promise(function(resolve, reject) {
     console.log("system checking... raspberry pi");
     localStorage.systemCheckComplete().then(()=>{
-      console.log('i am here.');
+      logSystemRunRaspberry()
       resolve(true);
     })
   });
 };
 
-function logSystemStatus() {
-  console.log("logged");
+exports.forceSystemRun = function() {
+  return new Promise(function(resolve, reject) {
+    console.log("forcing system run... raspberry pi");
+    logSystemRunRaspberry()
+    resolve(true)
+  });
+};
+
+function logSystemRunRaspberry() {
+  console.log('raspberry log system run')
+  localStorage.logSystemRun();
 }
