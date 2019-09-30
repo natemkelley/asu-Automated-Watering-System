@@ -4,7 +4,10 @@
     <v-card-text>
       And: ({{willRun.andActive}}/{{willRun.andCounts}}),
       Or: ({{willRun.orActive}}/{{willRun.orCounts}})
-      <strong style="float:right" v-bind:class="[willRun.status ? 'activeStatus' : 'inactiveStatus']">The system will {{willRun.text}} on next trigger</strong>
+      <v-chip style="float:right" small outlined :color="getColor">
+        The system will
+        {{ willRun.text }} on next trigger
+      </v-chip>
     </v-card-text>
 
     <v-simple-table class="px-2" dense fixed-header height="240px">
@@ -58,7 +61,7 @@ import moment from "moment";
 
 export default {
   name: "CurrentStatus",
-  props: ["weatherSettings","color"],
+  props: ["weatherSettings", "color"],
   data() {
     return {
       headers: ["Name", "Current Level", "Threshhold(s)", "Operand", "Status"],
@@ -80,7 +83,7 @@ export default {
       let thetotal = 0;
       let andActive = 0;
       let orActive = 0;
-      let status = null;
+      let status = false;
       let text = "will not run";
       //console.log(this.currentStati);
       this.currentStati.forEach(el => {
@@ -163,7 +166,7 @@ export default {
           ? "Activated"
           : "Inactive"
       });
-      console.log(this.weather)
+      //console.log(this.weather)
       returnArray.push({
         name: "% of Rain",
         level: Math.round(this.weather.futureweather.list[0].clouds.all) + "%",
@@ -209,6 +212,13 @@ export default {
       });
 
       return returnArray;
+    },
+    getColor(){
+      if(this.willRun.status == false){
+        return ''
+      } else{
+        return 'success'
+      }
     }
   },
   methods: {
@@ -308,11 +318,11 @@ export default {
 </script>
 
 <style scoped>
-.activeStatus{
-  color: green
+.activeStatus {
+  color: green;
 }
-.inactiveStatus{
-  color: rgb(204, 0, 0)
+.inactiveStatus {
+  color: rgb(204, 0, 0);
 }
 
 .fixed_header {

@@ -29,6 +29,11 @@ app.get("/system-check", async (req, res, next) => {
   res.json({ status: x });
 });
 
+app.get("/logs", async (req, res, next) => {
+  var updates = localStorage.getLocalStorage('recentUpdates');
+  res.json(updates);
+});
+
 app.get("/current-weather", async (req, res, next) => {
   const access = "31d95b55c973a21c020ae5235b73d16e";
   var weather = await axios.get(

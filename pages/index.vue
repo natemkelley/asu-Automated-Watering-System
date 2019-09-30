@@ -25,7 +25,7 @@
         </v-row>
         <v-row align="center">
           <v-col>
-            <RecentUpdates></RecentUpdates>
+            <RecentUpdates :logs="logs"></RecentUpdates>
           </v-col>
         </v-row>
       </v-container>
@@ -58,7 +58,7 @@ export default {
     Weather,
     RecentUpdates
   },
-    computed: {
+  computed: {
     color() {
       return colors.blue.darken2;
     }
@@ -66,13 +66,23 @@ export default {
   data() {
     return {
       weatherSettings: {},
-      weather: {}
+      weather: {},
+      logs: {}
     };
   },
   mounted() {
     //console.log(this.$store.state);
   },
   methods: {
+    getLogs() {
+      axios
+        .get("/api/logs")
+        .then(response => {
+          console.log(response.data);
+          this.logs = response.data;
+        })
+        .catch(error => {});
+    },
     getSettings() {
       axios
         .get("/api/weather-settings?query=")
@@ -91,8 +101,10 @@ export default {
   created() {
     this.getSettings();
     this.getWeather();
+    this.getLogs();
     this.$store.subscribe((mutation, state) => {
       this.getSettings();
+      this.getLogs();
     });
   }
 };

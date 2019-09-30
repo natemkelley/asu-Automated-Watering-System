@@ -1,6 +1,7 @@
 var colors = require("colors");
 var LocalStorage = require("node-localstorage").LocalStorage;
 var localStorage = new LocalStorage("./scratch");
+var axios = require("axios");
 
 exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
   if (!objectName) {
@@ -38,10 +39,8 @@ exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
 
 exports.getLocalStorage = function(objectName) {
   if (!objectName) {
-    console.log("getting ->", "allStorage");
     return allStorage();
   }
-  console.log("getting ->", objectName);
   return JSON.parse(localStorage.getItem(objectName));
 };
 
@@ -85,7 +84,7 @@ function initDatabse() {
   if (localStorage.length < 4) {
     exports.saveLocalStorage(
       "recentUpdates",
-      JSON.stringify([{}]),
+      JSON.stringify([]),
       "recent-updates"
     );
     exports.saveLocalStorage(
@@ -123,9 +122,6 @@ function initDatabse() {
   }
 }
 
-function getActiveStatue(objectName) {
-  return "disabled";
-}
 function isJson(str) {
   //console.log(colors.green(localStorage.getItem(str).length < 5));
   if (localStorage.getItem(str).length < 5) {
@@ -142,6 +138,20 @@ function isJson(str) {
   return true;
 }
 
+async function currentWeather() {
+  return new Promise(async function(resolve, reject) {
+    const access = "31d95b55c973a21c020ae5235b73d16e";
+    var weather = await axios.get(
+      `http://api.openweathermap.org/data/2.5/weather?q=Phoenix&appid=${access}&units=imperial`
+    );
+    var futureweather = await axios.get(
+      `http://api.openweathermap.org/data/2.5/forecast?q=Phoenix&appid=${access}&units=imperial&mode=json`
+    );
+    weather.data.futureweather = futureweather.data;
+    resolve(weather.data);
+  });
+}
+
 exports.systemCheckComplete = function() {
   return new Promise(function(resolve, reject) {
     console.log("systemCheckComplete");
@@ -149,7 +159,6 @@ exports.systemCheckComplete = function() {
     var nowTime = new Date();
     for (var key in allStors) {
       if (allStors.hasOwnProperty(key)) {
-        //console.log(allStors[key].objectName);
         exports.saveLocalStorage(allStors[key].objectName);
       }
     }
@@ -158,15 +167,77 @@ exports.systemCheckComplete = function() {
   });
 };
 
-exports.logSystemRun = function() {
-  return new Promise(function(resolve, reject) {
-    console.log('local log system run')
+exports.logSystemRun = async function(forcedRan) {
+  return new Promise(async function(resolve, reject) {
+    let weather = await currentWeather();
+    let timestamp = new Date();
+    let systemRan = String(forcedRan) || "false";
+    let temperature = {
+      value: weather.main.temp,
+      threshhold: exports.getLocalStorage("temperature").value
+    };
+    let humidity = {
+      value: weather.main.humidity,
+      threshhold: exports.getLocalStorage("humidity").value
+    };
+    let rain = {
+      value: weather.futureweather.list[0].clouds.all,
+      threshhold: exports.getLocalStorage("rain").value
+    };
+    let sensors = createSensorsArray();
+    let sensorsThreshold = {
+      value: getMoistureValue(),
+      threshhold: getMoistureThreshhold()
+    };
+    //console.log(colors.red(sensorsThreshold))
+    let logJSON = {
+      timestamp: timestamp,
+      systemRan: systemRan,
+      temperature: temperature,
+      humidity: humidity,
+      rain: rain,
+      sensors: sensors,
+      sensorsThreshold: sensorsThreshold
+    };
 
+    var oldArray = JSON.parse(exports.getLocalStorage("recentUpdates").value);
+    oldArray.push(logJSON);
+    exports.saveLocalStorage("recentUpdates", JSON.stringify(oldArray));
     resolve(true);
   });
+
+  function createSensorsArray() {
+    var returnArray = [];
+    //console.log(exports.getLocalStorage("moistureSensors").value)
+    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
+    sensors.forEach(element => {
+      returnArray.push({ name: element.sensor, value: element.moist });
+    });
+    return returnArray;
+  }
+  function getMoistureValue() {
+    var returnVal = 0;
+    //console.log(exports.getLocalStorage("moistureSensors").value)
+    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
+    sensors.forEach(element => {
+      if (element.moist == "true") {
+        returnVal++;
+      }
+    });
+    return returnVal;
+  }
+  function getMoistureThreshhold() {
+    var returnVal = 0;
+    //console.log(exports.getLocalStorage("moistureSensors").value)
+    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
+    sensors.forEach(element => {
+      if (element.mustBeTrue == "true") {
+        returnVal++;
+      }
+    });
+    return returnVal;
+  }
 };
 
 initDatabse();
-//exports.systemCheckComplete();
-
-//console.log(allStorage());
+//exports.logSystemRun(true);

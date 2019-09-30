@@ -174,6 +174,7 @@ export default {
   },
   watch: {
     weather(newData, oldData) {
+      //console.log(newData, oldData)
       this.setWeatherCharts(newData);
     }
   }

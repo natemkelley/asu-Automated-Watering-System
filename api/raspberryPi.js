@@ -34,22 +34,29 @@ function myTimer() {
 exports.systemCheck = function() {
   return new Promise(function(resolve, reject) {
     console.log("system checking... raspberry pi");
-    localStorage.systemCheckComplete().then(()=>{
-      logSystemRunRaspberry()
-      resolve(true);
-    })
+    localStorage.systemCheckComplete().then(() => {
+      logSystemRunRaspberry().then(()=>{
+        resolve(true);
+      });
+    });
   });
 };
 
 exports.forceSystemRun = function() {
   return new Promise(function(resolve, reject) {
     console.log("forcing system run... raspberry pi");
-    logSystemRunRaspberry()
-    resolve(true)
+    logSystemRunRaspberry(true).then(() => {
+      resolve(true);
+    });
   });
 };
 
-function logSystemRunRaspberry() {
-  console.log('raspberry log system run')
-  localStorage.logSystemRun();
+function logSystemRunRaspberry(systemRan) {
+  return new Promise(function(resolve, reject) {
+    console.log("raspberry log system run");
+    let forceSystem = systemRan || 'false';
+    localStorage.logSystemRun(forceSystem).then(() => {
+      resolve(true);
+    });
+  });
 }
