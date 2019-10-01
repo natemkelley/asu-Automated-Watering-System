@@ -25,8 +25,8 @@ app.get("/force-system-run", async (req, res, next) => {
 
 app.get("/system-check", async (req, res, next) => {
   console.log("system check api");
-  await raspberryPi.systemCheck();
-  res.json({ status: true });
+  await raspberryPi.systemCheck('check');
+  res.json({ status: true }); //this will trigger a refresh on the front end
 });
 
 app.get("/logs", async (req, res, next) => {

@@ -2,6 +2,7 @@ var colors = require("colors");
 var LocalStorage = require("node-localstorage").LocalStorage;
 var localStorage = new LocalStorage("./scratch");
 var axios = require("axios");
+var MAX_NUMBER_OF_LOGS = 100;
 
 exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
   if (!objectName) {
@@ -143,7 +144,7 @@ async function currentWeather() {
   });
 }
 
-exports.updateAllLogsToMostRecentCheck = function() {
+function updateAllLogsToMostRecentCheck() {
   return new Promise(function(resolve, reject) {
     var allStors = allStorage();
     var nowTime = new Date();
@@ -157,11 +158,22 @@ exports.updateAllLogsToMostRecentCheck = function() {
   });
 };
 
-exports.logSystemRun = async function(forcedRan) {
+function checkIfSystemWillRun(){
+  let andCounts = 0;
+  let orCounts = 0;
+  let thetotal = 0;
+  let andActive = 0;
+  let orActive = 0;
+  let status = false;
+
+  return false
+}
+
+exports.systemCheck = async function(forcedRan) {
   return new Promise(async function(resolve, reject) {
     let weather = await currentWeather();
     let timestamp = new Date();
-    let systemRan = String(forcedRan) || "false";
+    let systemRan = forcedRan || checkIfSystemWillRun();
     let temperature = {
       value: weather.main.temp,
       threshhold: exports.getLocalStorage("temperature").value
@@ -179,7 +191,6 @@ exports.logSystemRun = async function(forcedRan) {
       value: getMoistureValue(),
       threshhold: getMoistureThreshhold()
     };
-    //console.log(colors.red(sensorsThreshold))
     let logJSON = {
       timestamp: timestamp,
       systemRan: systemRan,
@@ -193,8 +204,10 @@ exports.logSystemRun = async function(forcedRan) {
     var oldArray = JSON.parse(exports.getLocalStorage("recentUpdates").value);
     oldArray.push(logJSON);
     exports.saveLocalStorage("recentUpdates", JSON.stringify(oldArray));
-    cleanUpArrayToXElements(100);
-    resolve(true);
+    cleanUpArrayToXElements(MAX_NUMBER_OF_LOGS);
+    await updateAllLogsToMostRecentCheck();
+    console.log(colors.yellow(systemRan))
+    resolve(systemRan);
   });
 
   function createSensorsArray() {

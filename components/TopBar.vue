@@ -19,6 +19,11 @@
       :disabled="loading"
       @click="forceSystemRun()"
     >Are you sure?</v-btn>
+
+    <v-snackbar v-model="snackbar" color="error" right="right" top="top">
+      System has been forced to run
+      <v-btn dark text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-app-bar>
 </template>
 
@@ -32,7 +37,8 @@ export default {
     return {
       loading: false,
       disabled: false,
-      areyousure: false
+      areyousure: false,
+      snackbar: false
     };
   },
   methods: {
@@ -46,7 +52,8 @@ export default {
           this.loading = false;
           this.disabled = false;
           this.areyousure = false;
-          alert('System has been forced to run!')
+          this.snackbar = true;
+          this.$store.commit("triggerRefresh"); //this will trigger a refresh
         }, 1000);
       });
     },
@@ -57,7 +64,7 @@ export default {
         this.areyousure = true;
         this.loading = false;
         this.disabled = false;
-      }, 600);
+      }, 1000);
       setTimeout(() => {
         this.areyousure = false;
       }, 2300);

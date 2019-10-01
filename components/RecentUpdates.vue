@@ -6,7 +6,6 @@
         <v-chip :color="getColor(item.systemRan)" dark>{{ item.systemRan }}</v-chip>
       </template>
     </v-data-table>
-
   </v-card>
 </template>
     <v-data-table :headers="headers" :items="headers" :items-per-page="10" class="elevation-1"></v-data-table>
@@ -65,8 +64,15 @@ export default {
   },
   methods: {
     getColor(value) {
-      if (value == "true") return "green lighten-1";
-      else return "grey lighten-1";
+      if (value == "true") {
+        return "green lighten-1";
+      } else if (value == "forced") {
+        return "green lighten-1";
+      } else if (value == "check") {
+        return "amber darken-1";
+      } else {
+        return "grey lighten-1";
+      }
     }
   }
 };
@@ -74,6 +80,6 @@ export default {
 
 <style>
 .v-data-table td {
-    text-transform: capitalize!important;
+  text-transform: capitalize !important;
 }
 </style>
