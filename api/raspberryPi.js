@@ -32,13 +32,11 @@ function myTimer() {
 }
 
 exports.systemCheck = function() {
-  return new Promise(function(resolve, reject) {
+  return new Promise(async function(resolve, reject) {
     console.log("system checking... raspberry pi");
-    localStorage.systemCheckComplete().then(() => {
-      logSystemRunRaspberry().then(()=>{
-        resolve(true);
-      });
-    });
+    await localStorage.updateAllLogsToMostRecentCheck();
+    await logSystemRunRaspberry();
+    resolve(true);
   });
 };
 
@@ -54,7 +52,7 @@ exports.forceSystemRun = function() {
 function logSystemRunRaspberry(systemRan) {
   return new Promise(function(resolve, reject) {
     console.log("raspberry log system run");
-    let forceSystem = systemRan || 'false';
+    let forceSystem = systemRan || "false";
     localStorage.logSystemRun(forceSystem).then(() => {
       resolve(true);
     });

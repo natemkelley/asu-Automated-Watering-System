@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <MySidebar></MySidebar>
+    <!--<MySidebar></MySidebar>-->
     <TopBar :color="color"></TopBar>
 
     <v-content class="mx-3">

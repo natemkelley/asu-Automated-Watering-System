@@ -14,16 +14,7 @@ exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
     active = JSON.parse(localStorage.getItem(objectName)).active;
   }
 
-  console.log(
-    colors.green(
-      "saving " +
-        objectName +
-        " with a value of " +
-        value +
-        " and a active of " +
-        active
-    )
-  );
+  console.log(colors.green("saving " + objectName));
   localStorage.setItem(
     String(objectName),
     JSON.stringify({
@@ -152,9 +143,8 @@ async function currentWeather() {
   });
 }
 
-exports.systemCheckComplete = function() {
+exports.updateAllLogsToMostRecentCheck = function() {
   return new Promise(function(resolve, reject) {
-    console.log("systemCheckComplete");
     var allStors = allStorage();
     var nowTime = new Date();
     for (var key in allStors) {
@@ -203,6 +193,7 @@ exports.logSystemRun = async function(forcedRan) {
     var oldArray = JSON.parse(exports.getLocalStorage("recentUpdates").value);
     oldArray.push(logJSON);
     exports.saveLocalStorage("recentUpdates", JSON.stringify(oldArray));
+    cleanUpArrayToXElements(100);
     resolve(true);
   });
 
@@ -236,6 +227,14 @@ exports.logSystemRun = async function(forcedRan) {
       }
     });
     return returnVal;
+  }
+  function cleanUpArrayToXElements(number) {
+    var logs = JSON.parse(exports.getLocalStorage("recentUpdates").value);
+    if(logs.length > number){
+      var excess = logs.length - number;
+      var removed = logs.splice(0, excess);
+      exports.saveLocalStorage("recentUpdates", JSON.stringify(logs));
+    }
   }
 };
 

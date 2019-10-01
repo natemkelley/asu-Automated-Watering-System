@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app hide-on-scroll>
-    <v-app-bar-nav-icon class="d-lg-none" @click.native="$store.commit('toggleNav')"></v-app-bar-nav-icon>
+    <!-- <v-app-bar-nav-icon class="d-lg-none" @click.native="$store.commit('toggleNav')"></v-app-bar-nav-icon>-->
     <v-toolbar-title>Vuetify</v-toolbar-title>
     <div class="flex-grow-1"></div>
 
@@ -11,9 +11,7 @@
       :loading="loading"
       :disabled="loading"
       @click="checkIfForceSystemRun()"
-    >
-      Force System Run
-    </v-btn>
+    >Force System Run</v-btn>
     <v-btn
       v-show="areyousure"
       color="error"
@@ -26,10 +24,10 @@
 
 <script>
 import axios from "axios";
- 
+
 export default {
   name: "TopBar",
-  props:['color'],
+  props: ["color"],
   data() {
     return {
       loading: false,
@@ -44,9 +42,12 @@ export default {
 
       axios.get(`http://localhost:3000/api/force-system-run`).then(res => {
         this.$store.commit("triggerRefresh"); //this will trigger a refresh
-        this.loading = false;
-        this.disabled = false;
-        alert('Force system to run')
+        setTimeout(() => {
+          this.loading = false;
+          this.disabled = false;
+          this.areyousure = false;
+          alert('System has been forced to run!')
+        }, 1000);
       });
     },
     checkIfForceSystemRun() {

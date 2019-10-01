@@ -25,8 +25,8 @@ app.get("/force-system-run", async (req, res, next) => {
 
 app.get("/system-check", async (req, res, next) => {
   console.log("system check api");
-  var x = await raspberryPi.systemCheck();
-  res.json({ status: x });
+  await raspberryPi.systemCheck();
+  res.json({ status: true });
 });
 
 app.get("/logs", async (req, res, next) => {
