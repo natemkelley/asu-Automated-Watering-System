@@ -6,6 +6,18 @@
         <v-progress-circular :size="80" :width="7" color="white" indeterminate></v-progress-circular>
       </div>
     </v-row>
+    <v-row v-if="showAlert && !loading && gridSettings" justify="center" align="center">
+      <v-col>
+        <v-alert
+          type="info"
+          prominent
+          colored-border
+          width="100%"
+          border="left"
+          class="mb-3 mt-n6"
+        >The system will run on every check!</v-alert>
+      </v-col>
+    </v-row>
     <v-row
       v-show="!loading"
       v-bind:class="{ loading: loading }"
@@ -200,6 +212,18 @@ export default {
         }
       }
       return false;
+    },
+    showAlert() {
+      var returnVal = true;
+      for (var key in this.gridSettings) {
+        if (key != "time" && key != "timer" && key != "recentUpdates" && key != "currentTriggers") {
+          if (this.gridSettings[key].active != "disabled") {
+            console.log("active", key);
+            returnVal = false;
+          }
+        }
+      }
+      return returnVal;
     }
   },
   filters: {

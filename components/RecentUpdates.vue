@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     getColor(value) {
-      if (value == "true") {
+      if (value == "true" || value===true) {
         return "green lighten-1";
       } else if (value == "forced") {
         return "green lighten-1";

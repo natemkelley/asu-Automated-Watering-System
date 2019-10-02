@@ -1,7 +1,8 @@
 var colors = require("colors");
 var LocalStorage = require("node-localstorage").LocalStorage;
 var localStorage = new LocalStorage("./scratch");
-var axios = require("axios");
+const axios = require("axios");
+const raspberryPi = require("../api/raspberryPi.js");
 var MAX_NUMBER_OF_LOGS = 100;
 
 exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
@@ -15,7 +16,6 @@ exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
     active = JSON.parse(localStorage.getItem(objectName)).active;
   }
 
-  console.log(colors.green("saving " + objectName));
   localStorage.setItem(
     String(objectName),
     JSON.stringify({
@@ -26,6 +26,16 @@ exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
       lastRunTime: lastRunTime || new Date()
     })
   );
+
+  //handle changes to timer or time
+  console.log(colors.green("saving " + objectName));
+  if (objectName === "timer") {
+    raspberryPi.handleNewTimer();
+  }
+  if (objectName === "time") {
+    raspberryPi.handleNewTime();
+  }
+
   return localStorage.getItem(objectName);
 };
 
@@ -156,9 +166,10 @@ function updateAllLogsToMostRecentCheck() {
 
     resolve(true);
   });
-};
+}
 
-function checkIfSystemWillRun(){
+function checkIfSystemWillRun(weather) {
+  //if(!weather) weather = await currentWeather();
   let andCounts = 0;
   let orCounts = 0;
   let thetotal = 0;
@@ -166,14 +177,37 @@ function checkIfSystemWillRun(){
   let orActive = 0;
   let status = false;
 
-  return false
+  /*
+      this.currentStati.forEach(el => {
+        if (el.operand == "and" || el.operand == "or") {
+          thetotal++;
+        }
+        if (el.operand == "and") {
+          andCounts++;
+          //console.log(el);
+          if (el.status == "Activated") {
+            andActive++;
+          }
+        }
+        if (el.operand == "or") {
+          orCounts++;
+          if (el.status == "Activated") {
+            orActive++;
+          }
+        }
+      });
+
+
+*/
+
+  return false;
 }
 
 exports.systemCheck = async function(forcedRan) {
   return new Promise(async function(resolve, reject) {
     let weather = await currentWeather();
     let timestamp = new Date();
-    let systemRan = forcedRan || checkIfSystemWillRun();
+    let systemRan = forcedRan || checkIfSystemWillRun(weather);
     let temperature = {
       value: weather.main.temp,
       threshhold: exports.getLocalStorage("temperature").value
@@ -206,7 +240,7 @@ exports.systemCheck = async function(forcedRan) {
     exports.saveLocalStorage("recentUpdates", JSON.stringify(oldArray));
     cleanUpArrayToXElements(MAX_NUMBER_OF_LOGS);
     await updateAllLogsToMostRecentCheck();
-    console.log(colors.yellow(systemRan))
+    console.log(colors.yellow(systemRan));
     resolve(systemRan);
   });
 
@@ -243,7 +277,7 @@ exports.systemCheck = async function(forcedRan) {
   }
   function cleanUpArrayToXElements(number) {
     var logs = JSON.parse(exports.getLocalStorage("recentUpdates").value);
-    if(logs.length > number){
+    if (logs.length > number) {
       var excess = logs.length - number;
       var removed = logs.splice(0, excess);
       exports.saveLocalStorage("recentUpdates", JSON.stringify(logs));
@@ -251,5 +285,5 @@ exports.systemCheck = async function(forcedRan) {
   }
 };
 
-initDatabse();
+//initDatabse();
 //exports.logSystemRun(true);

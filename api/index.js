@@ -25,12 +25,12 @@ app.get("/force-system-run", async (req, res, next) => {
 
 app.get("/system-check", async (req, res, next) => {
   console.log("system check api");
-  await raspberryPi.systemCheck('check');
+  await raspberryPi.systemCheck("check");
   res.json({ status: true }); //this will trigger a refresh on the front end
 });
 
 app.get("/logs", async (req, res, next) => {
-  var updates = localStorage.getLocalStorage('recentUpdates');
+  var updates = localStorage.getLocalStorage("recentUpdates");
   res.json(updates);
 });
 
@@ -96,19 +96,16 @@ app.get("/weather", async (req, res, next) => {
 });
 
 app.post("/weather-settings", async (req, res, next) => {
-  let value = localStorage.saveLocalStorage(
+  let value = await localStorage.saveLocalStorage(
     req.body.query,
     req.body.value,
     req.body.active
   );
-  if (value.error === false) {
-    res.json(value);
-  } else {
-    res.json({
-      status: true,
-      results: localStorage.getLocalStorage(req.query.query)
-    });
-  }
+
+  res.json({
+    status: true,
+    results: localStorage.getLocalStorage(req.query.query)
+  });
 });
 
 app.get("/weather-settings", async (req, res, next) => {

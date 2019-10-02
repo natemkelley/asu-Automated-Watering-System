@@ -39,7 +39,7 @@ export default {
       } else if (this.number > this.max) {
         this.number = this.max;
       }
-      this.startSavingValue(val);
+      this.startSavingValue(this.number);
     },
     startSavingValue(value) {
       this.saveValue("timer", value);

@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app hide-on-scroll>
     <!-- <v-app-bar-nav-icon class="d-lg-none" @click.native="$store.commit('toggleNav')"></v-app-bar-nav-icon>-->
-    <v-toolbar-title>Vuetify</v-toolbar-title>
+    <v-toolbar-title>Automated Watering System</v-toolbar-title>
     <div class="flex-grow-1"></div>
 
     <v-btn
