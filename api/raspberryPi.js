@@ -17,26 +17,6 @@ function startINTERVALS(times) {
   });
 }
 
-function conformTimeToMillisecondUntil(time) {
-  var millisecondUntil = null;
-  var currentTime = moment(new Date()).valueOf();
-  var today = moment(new Date()).format("YYYY/MM/DD");
-  var nextDay = false;
-  var checkIfToday = moment(new Date(today + " " + time)).diff(
-    moment(new Date())
-  );
-
-  if (checkIfToday < 0) {
-    today = moment(new Date(today))
-      .add(1, "days")
-      .format("YYYY/MM/DD");
-  }
-
-  millisecondUntil = moment(new Date(today + " " + time)).valueOf() - currentTime;
-
-  return millisecondUntil;
-}
-
 function stopINTERVALS() {
   //console.log(colors.red("clearing intervals", TIMER_ARRAY));
   TIMER_ARRAY.forEach((element, n) => {
@@ -62,6 +42,25 @@ async function checkIfAndRunSystem() {
   }
 }
 
+function conformTimeToMillisecondUntil(time) {
+  var millisecondUntil = null;
+  var currentTime = moment(new Date()).valueOf();
+  var today = moment(new Date()).format("YYYY/MM/DD");
+  var nextDay = false;
+  var checkIfToday = moment(new Date(today + " " + time)).diff(
+    moment(new Date())
+  );
+
+  if (checkIfToday < 0) {
+    today = moment(new Date(today))
+      .add(1, "days")
+      .format("YYYY/MM/DD");
+  }
+
+  millisecondUntil = moment(new Date(today + " " + time)).valueOf() - currentTime;
+
+  return millisecondUntil;
+}
 
 //still need to do this
 function runSystem() {
@@ -115,7 +114,6 @@ exports.handleNewTime = function() {
 
 exports.systemCheck = function(forceRunOrCheck) {
   return new Promise(async function(resolve, reject) {
-    console.log("system checking... raspberry pi");
     let systemWillRun = await localStorage.systemCheck(forceRunOrCheck);
     resolve(true);
   });
@@ -124,8 +122,8 @@ exports.systemCheck = function(forceRunOrCheck) {
 exports.forceSystemRun = function() {
   return new Promise(async function(resolve, reject) {
     console.log("forcing system run... raspberry pi");
+    await exports.systemCheck("forced");
     await runSystem();
-    await localStorage.systemCheck("forced");
     resolve(true);
   });
 };

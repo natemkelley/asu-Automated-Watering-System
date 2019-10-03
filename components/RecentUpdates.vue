@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>Recent Updates</v-card-title>
-    <v-data-table class="px-2" :loading="!renderTable" :headers="headers" :items="logsParsed">
+    <v-data-table class="px-2" disable-sort :loading="!renderTable" :headers="headers" :items="logsParsed">
       <template v-slot:item.systemRan="{ item }">
         <v-chip :color="getColor(item.systemRan)" dark>{{ item.systemRan }}</v-chip>
       </template>
@@ -22,7 +22,7 @@ export default {
         {
           text: "Timestamp",
           align: "left",
-          sortable: true,
+          sortable: false,
           value: "timestamp"
         },
         { text: "System Ran", value: "systemRan" },

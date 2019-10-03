@@ -56,7 +56,6 @@ exports.systemCheck = async function(forcedRan) {
 
     //clean up log array
     cleanUpArrayToXElements(MAX_NUMBER_OF_LOGS);
-    await updateAllLogsToMostRecentCheck();
 
     //return if the system is ready to run
     resolve(systemRan);
@@ -249,20 +248,6 @@ async function currentWeather() {
     );
     weather.data.futureweather = futureweather.data;
     resolve(weather.data);
-  });
-}
-
-function updateAllLogsToMostRecentCheck() {
-  return new Promise(function(resolve, reject) {
-    var allStors = allStorage();
-    var nowTime = new Date();
-    for (var key in allStors) {
-      if (allStors.hasOwnProperty(key)) {
-        exports.saveLocalStorage(allStors[key].objectName);
-      }
-    }
-
-    resolve(true);
   });
 }
 
