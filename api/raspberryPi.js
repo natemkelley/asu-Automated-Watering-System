@@ -10,10 +10,10 @@ var INTERVAL_ARRAY = [];
 var TIMER_ARRAY = [];
 
 function startINTERVALS(times) {
-  console.log("starting intervals...", times);
+  //console.log("starting intervals...", times);
   times.forEach((element, n) => {
     var milliseconds = Number(conformTimeToMillisecondUntil(element));
-    INTERVAL_ARRAY[n] = setInterval(myTriggerFunction, milliseconds);
+    INTERVAL_ARRAY[n] = setInterval(checkIfAndRunSystem, milliseconds);
   });
 }
 
@@ -38,39 +38,35 @@ function conformTimeToMillisecondUntil(time) {
 }
 
 function stopINTERVALS() {
-  console.log(colors.red("clearing intervals", TIMER_ARRAY));
+  //console.log(colors.red("clearing intervals", TIMER_ARRAY));
   TIMER_ARRAY.forEach((element, n) => {
     clearInterval(INTERVAL_ARRAY[n])
   });
 }
 
 function startTIMER(milliseconds) {
-  console.log(colors.green("starting timer " + milliseconds/1000/60));
-  TIMER = setInterval(myTriggerFunction, milliseconds);
+  //console.log(colors.green("starting timer " + milliseconds/1000/60));
+  TIMER = setInterval(checkIfAndRunSystem, milliseconds);
 }
 
 function stopTIMER() {
-  console.log(colors.red("clearing TIMER!"));
+  //console.log(colors.red("clearing TIMER!"));
   clearInterval(TIMER);
 }
 
-//handle if and run...
-function myTriggerFunction(n) {
-  console.log("myTriggerFunction"),n;
+async function checkIfAndRunSystem() {
+  console.log(colors.yellow('checkIfAndRunSystem'))
+  var systemWillRun = await exports.systemCheck();
+  if(String(systemWillRun) == 'true'){
+    runSystem();
+  }
 }
 
-//still need to do this
-function getAndSaveMoistureLevels() {
-  return new Promise(function(resolve, reject) {
-    console.log("getAndSaveMoistureLevels...");
-    resolve([]);
-  });
-}
 
 //still need to do this
 function runSystem() {
   return new Promise(function(resolve, reject) {
-    console.log("run system...");
+    console.log(colors.bgGreen('RUNNING SYSTEM!!!'));
     resolve(true);
   });
 }
@@ -80,8 +76,16 @@ function minutesToMilliseconds(minutes) {
   return value;
 }
 
+//still need to do this
+exports.getAndSaveMoistureLevels = function () {
+  return new Promise(function(resolve, reject) {
+    console.log("still need to do this... getAndSaveMoistureLevels...");
+    resolve([]);
+  });
+}
+
 exports.handleNewTimer = function() {
-  console.log(colors.yellow("handleNewTimer"));
+  //console.log(colors.yellow("handleNewTimer"));
   return new Promise(async function(resolve, reject) {
     var currentTimer = TIMER;
     var localStorageTimerValue = Number(
@@ -93,9 +97,8 @@ exports.handleNewTimer = function() {
   });
 };
 
-//still need to do this
 exports.handleNewTime = function() {
-  console.log(colors.yellow("handleNewTime"));
+  //console.log(colors.yellow("handleNewTime"));
   return new Promise(async function(resolve, reject) {
     if (TIMER_ARRAY.length === 0) {
       startINTERVALS(JSON.parse(localStorage.getLocalStorage("time").value));
@@ -113,8 +116,7 @@ exports.handleNewTime = function() {
 exports.systemCheck = function(forceRunOrCheck) {
   return new Promise(async function(resolve, reject) {
     console.log("system checking... raspberry pi");
-    await getAndSaveMoistureLevels();
-    await localStorage.systemCheck(forceRunOrCheck);
+    let systemWillRun = await localStorage.systemCheck(forceRunOrCheck);
     resolve(true);
   });
 };
@@ -127,3 +129,5 @@ exports.forceSystemRun = function() {
     resolve(true);
   });
 };
+
+//checkIfAndRunSystem();

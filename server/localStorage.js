@@ -5,6 +5,104 @@ const axios = require("axios");
 const raspberryPi = require("../api/raspberryPi.js");
 var MAX_NUMBER_OF_LOGS = 100;
 
+
+exports.systemCheck = async function(forcedRan) {
+  return new Promise(async function(resolve, reject) {
+    //see if current levels will allow system to run
+    let weather = await currentWeather();
+
+    //collect moisturelevel readings
+    await raspberryPi.getAndSaveMoistureLevels();
+
+    //collect information for logging
+    let timestamp = new Date();
+    let temperature = {
+      value: weather.main.temp,
+      threshhold: exports.getLocalStorage("temperature").value,
+      operand: exports.getLocalStorage("temperature").active
+    };
+    let humidity = {
+      value: weather.main.humidity,
+      threshhold: exports.getLocalStorage("humidity").value,
+      operand: exports.getLocalStorage("humidity").active
+    };
+    let rain = {
+      value: weather.futureweather.list[0].clouds.all,
+      threshhold: exports.getLocalStorage("rain").value,
+      operand: exports.getLocalStorage("rain").active
+    };
+    let sensors = createSensorsArray();
+    let sensorsThreshold = {
+      value: getMoistureValue(),
+      threshhold: getMoistureThreshhold(),
+      operand: exports.getLocalStorage("moistureSensors").active
+    };
+
+    let logJSON = {
+      temperature: temperature,
+      humidity: humidity,
+      rain: rain,
+      sensorsThreshold: sensorsThreshold
+    };
+    //get checkSystem and update logs with all information
+    let systemRan = forcedRan || await checkIfSystemWillRun(logJSON);
+    logJSON.systemRan = systemRan;
+    logJSON.sensors = sensors;
+    logJSON.timestamp = timestamp;
+
+    var oldArray = JSON.parse(exports.getLocalStorage("recentUpdates").value);
+    oldArray.push(logJSON);
+    exports.saveLocalStorage("recentUpdates", JSON.stringify(oldArray));
+
+    //clean up log array
+    cleanUpArrayToXElements(MAX_NUMBER_OF_LOGS);
+    await updateAllLogsToMostRecentCheck();
+
+    //return if the system is ready to run
+    resolve(systemRan);
+  });
+
+  function createSensorsArray() {
+    var returnArray = [];
+    //console.log(exports.getLocalStorage("moistureSensors").value)
+    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
+    sensors.forEach(element => {
+      returnArray.push({ name: element.sensor, value: element.moist });
+    });
+    return returnArray;
+  }
+  function getMoistureValue() {
+    var returnVal = 0;
+    //console.log(exports.getLocalStorage("moistureSensors").value)
+    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
+    sensors.forEach(element => {
+      if (element.moist == "true") {
+        returnVal++;
+      }
+    });
+    return returnVal;
+  }
+  function getMoistureThreshhold() {
+    var returnVal = 0;
+    //console.log(exports.getLocalStorage("moistureSensors").value)
+    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
+    sensors.forEach(element => {
+      if (element.mustBeTrue == "true") {
+        returnVal++;
+      }
+    });
+    return returnVal;
+  }
+  function cleanUpArrayToXElements(number) {
+    var logs = JSON.parse(exports.getLocalStorage("recentUpdates").value);
+    if (logs.length > number) {
+      var excess = logs.length - number;
+      var removed = logs.splice(0, excess);
+      exports.saveLocalStorage("recentUpdates", JSON.stringify(logs));
+    }
+  }
+};
+
 exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
   if (!objectName) {
     return { error: "No object name" };
@@ -28,7 +126,7 @@ exports.saveLocalStorage = function(objectName, value, active, lastRunTime) {
   );
 
   //handle changes to timer or time
-  console.log(colors.green("saving " + objectName));
+  //console.log(colors.green("saving " + objectName));
   if (objectName === "timer") {
     raspberryPi.handleNewTimer();
   }
@@ -168,122 +266,60 @@ function updateAllLogsToMostRecentCheck() {
   });
 }
 
-function checkIfSystemWillRun(weather) {
-  //if(!weather) weather = await currentWeather();
-  let andCounts = 0;
-  let orCounts = 0;
-  let thetotal = 0;
-  let andActive = 0;
-  let orActive = 0;
-  let status = false;
+async function checkIfSystemWillRun(settings) {
+  //console.log("checkIfSystemWillRun inside logs");
+  var andCounts = 0;
+  var orCounts = 0;
+  var thetotal = 0;
+  var andActive = 0;
+  var orActive = 0;
 
-  /*
-      this.currentStati.forEach(el => {
-        if (el.operand == "and" || el.operand == "or") {
-          thetotal++;
-        }
-        if (el.operand == "and") {
-          andCounts++;
-          //console.log(el);
-          if (el.status == "Activated") {
-            andActive++;
-          }
-        }
-        if (el.operand == "or") {
-          orCounts++;
-          if (el.status == "Activated") {
-            orActive++;
-          }
-        }
-      });
-
-
-*/
-
-  return false;
-}
-
-exports.systemCheck = async function(forcedRan) {
-  return new Promise(async function(resolve, reject) {
-    let weather = await currentWeather();
-    let timestamp = new Date();
-    let systemRan = forcedRan || checkIfSystemWillRun(weather);
-    let temperature = {
-      value: weather.main.temp,
-      threshhold: exports.getLocalStorage("temperature").value
-    };
-    let humidity = {
-      value: weather.main.humidity,
-      threshhold: exports.getLocalStorage("humidity").value
-    };
-    let rain = {
-      value: weather.futureweather.list[0].clouds.all,
-      threshhold: exports.getLocalStorage("rain").value
-    };
-    let sensors = createSensorsArray();
-    let sensorsThreshold = {
-      value: getMoistureValue(),
-      threshhold: getMoistureThreshhold()
-    };
-    let logJSON = {
-      timestamp: timestamp,
-      systemRan: systemRan,
-      temperature: temperature,
-      humidity: humidity,
-      rain: rain,
-      sensors: sensors,
-      sensorsThreshold: sensorsThreshold
-    };
-
-    var oldArray = JSON.parse(exports.getLocalStorage("recentUpdates").value);
-    oldArray.push(logJSON);
-    exports.saveLocalStorage("recentUpdates", JSON.stringify(oldArray));
-    cleanUpArrayToXElements(MAX_NUMBER_OF_LOGS);
-    await updateAllLogsToMostRecentCheck();
-    console.log(colors.yellow(systemRan));
-    resolve(systemRan);
-  });
-
-  function createSensorsArray() {
-    var returnArray = [];
-    //console.log(exports.getLocalStorage("moistureSensors").value)
-    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
-    sensors.forEach(element => {
-      returnArray.push({ name: element.sensor, value: element.moist });
-    });
-    return returnArray;
-  }
-  function getMoistureValue() {
-    var returnVal = 0;
-    //console.log(exports.getLocalStorage("moistureSensors").value)
-    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
-    sensors.forEach(element => {
-      if (element.moist == "true") {
-        returnVal++;
+  for(key in settings){
+    if(settings[key].operand === 'and'){
+      andCounts++
+      if(getIfActivated(key)){
+        andActive++
       }
-    });
-    return returnVal;
-  }
-  function getMoistureThreshhold() {
-    var returnVal = 0;
-    //console.log(exports.getLocalStorage("moistureSensors").value)
-    var sensors = JSON.parse(exports.getLocalStorage("moistureSensors").value);
-    sensors.forEach(element => {
-      if (element.mustBeTrue == "true") {
-        returnVal++;
+    }
+    if(settings[key].operand === 'or'){
+      orCounts++
+      if(getIfActivated(key)){
+        orActive++
       }
-    });
-    return returnVal;
-  }
-  function cleanUpArrayToXElements(number) {
-    var logs = JSON.parse(exports.getLocalStorage("recentUpdates").value);
-    if (logs.length > number) {
-      var excess = logs.length - number;
-      var removed = logs.splice(0, excess);
-      exports.saveLocalStorage("recentUpdates", JSON.stringify(logs));
     }
   }
-};
+
+  //(andCounts,andActive, orCounts, orActive);
+
+  if(orActive >= 1){
+    return true
+  }
+
+  if(andActive == andCounts){
+    return true
+  }
+
+  return false;
+
+  function getIfActivated(key){
+    var lowerbound = false;
+    if(key === 'humidity'){
+      lowerbound = true
+    }
+
+    if (lowerbound) {
+      if (settings[key].value <= settings[key].threshhold) {
+        return true;
+      }
+    } else {
+      if (settings[key].value >= settings[key].threshhold) {
+        return true;
+      }
+    }
+    return false
+  }
+}
 
 //initDatabse();
 //exports.logSystemRun(true);
+
