@@ -426,8 +426,3 @@ table {
 //https://haltu.github.io/muuri/
 //https://interactjs.io/
 //---- https://codepen.io/eljefedelrodeodeljefe/pen/vybegM
-    <v-container fluid>
-      <v-row style="height: 100%;" class="yellow lighten-3" align="end" justify="center">
-
-      </v-row>
-    </v-container>
