@@ -166,15 +166,17 @@ This component allows the user to see what the current levels of the system are 
 
 ### Recent Updates
 This system monitoring component uses Hollnagel’s Safety II approach. In this approach the evaluators try to ensure that as few things go right as possible by making a list of what went right. This log component keep track as all sensor, weather, and system status information so that operators can see how the system was performing at a certain time and cross check that with how it should be. This means the operator focuses on what is right rather than what went wrong is with the system. From here the operator can see what each threshold level was and decide from there as to whether it ran improperly or not (Hollnagel, 2012).
+
 ![enter image description here](https://lh3.googleusercontent.com/oN6RjdSuuQ9Y7aFpyseqDs2K5UmcljZcnWMXZHTjMcipLSEpWOs5hisX5iXOXNrrCHS5oTaGJ49l "Recent Updates")
 
 
 # Citations
+***APA Citation formatting may be stripped through Markdown.***
+
 Hollnagel, Erik. 2012. A Tale of Two Safeties. http://erikhollnagel.com/A%20Tale%20of%20Two%20Safeties.pdf
 
 Lee, John D., See, Katrina A., Spring 2004, Trust in Automation: Designing for Appropriate Reliance. https://user.engineering.uiowa.edu/~csl/publications/pdf/leesee04.pdf
 
 Meyer, Joachim. January 1, 2001. Effects of Warning Validity and Proximity on Responses to Warnings. http://hfs.sagepub.com/content/43/4/563.
 
-(Sheridan, 2002)
 Sheridan, Thomas. July 11, 2002. Humans and Automation Chapter 6: Supervisory Control.
