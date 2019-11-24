@@ -171,7 +171,7 @@ This system monitoring component uses Hollnagel’s Safety II approach. In this 
 
 
 # Citations
-***APA Citation formatting may be stripped through Markdown.***
+> ***APA Citation formatting may be stripped through Markdown.***
 
 Hollnagel, Erik. 2012. A Tale of Two Safeties. http://erikhollnagel.com/A%20Tale%20of%20Two%20Safeties.pdf
 
