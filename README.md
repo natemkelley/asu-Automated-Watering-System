@@ -4,7 +4,7 @@
 
 ## Disclaimer
 
-> **Note:** This software was made as a final project for a class at ASU called **HSE 424 - Human Automation Interaction**. The purpose of this class was to explore the human side of automation and included lengthy research topics related to psychology, trust, management. I have done my best to bridge this repo between academia and reality. Although this was made for a class I encourage you to fork, commit, or clone my work and use it for your own projects!
+> **Note:** This software was made as a final project for a class at ASU called **HSE 424 - Human Automation Interaction**. The course was taught by **[Erin Chiou](https://isearch.asu.edu/profile/3015725)**  The purpose of this class was to explore the human side of automation and included lengthy research topics related to psychology, trust, management. I have done my best to bridge this repo between academia and reality. Although this was made for a class I encourage you to fork, commit, or clone my work and use it for your own projects!
 
 # Introduction
 
@@ -171,6 +171,7 @@ This system monitoring component uses Hollnagel’s Safety II approach. In this 
 
 
 # Citations
+
 > ***APA Citation formatting may be stripped through Markdown.***
 
 Hollnagel, Erik. 2012. A Tale of Two Safeties. http://erikhollnagel.com/A%20Tale%20of%20Two%20Safeties.pdf
