@@ -73,8 +73,9 @@ Refreshes are triggered in various components and uses Vue’s Vuex feature. Nux
 ```javascript
 this.$store.commit("triggerRefresh"); //this will trigger a refresh
 ```
-| CurrentSettings.vue | Props: color, weatherSettings |
+| Component | Props |
 |--|--|
+| CurrentSettings.vue | Props: color, weatherSettings |
 | CurrentStatus.vue | Props: weatherSettings |
 | Footer.vue | No Props |
 | MoistureSensors.vue | Props: weatherSettings |
@@ -90,7 +91,7 @@ this.$store.commit("triggerRefresh"); //this will trigger a refresh
 ### Back-end
 The API uses a node library which uses a scratch space like a database. This decision was made concisely to limit database dependencies and possible issues which might arise from people using different version of Raspberry Pi. The end points are defined in “api/index.js”. The raspberry Pi functionality is defined under “api/raspberryPi.js”. The raspberry pi functionality will actually be discussed under “Customization”.
 
-
+| Endpoint | Calls/Returns |
 | / | Get: Return true if api is working |
 | --- | --- |
 | /force-system-run | Get: Return true is system was forced to run |
