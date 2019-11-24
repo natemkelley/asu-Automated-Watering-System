@@ -1,5 +1,6 @@
 # Welcome to my Automated Watering System!
 
+Video Demo:
 [![Demo Video Play Image](http://img.youtube.com/vi/_g6O5HthypE/0.jpg)](http://www.youtube.com/watch?v=_g6O5HthypE "Demo Video")
 
 ## Disclaimer
