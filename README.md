@@ -143,12 +143,12 @@ If the power goes out, this program will not work. This could be an issue if you
 In order to describe the human-automation principles used in this software, I will go through each component individually describing what exactly was changed or influenced.
 
 ### Top Bar
-The top of the program has a navigation bar that allows the user to force run the system. However, before the system will run it will confirm that the user wants to perform that action. If the system is already running, the user can force stop the system. This component harkens back to Thomas Sheridan’s concept of “supervisory control”. The user can see if the system is currently running and make a decision about what to do from there. As you will see from the later components, this system is a “strict system” which means that the program functions with parameters set by the human. ()
+The top of the program has a navigation bar that allows the user to force run the system. However, before the system will run it will confirm that the user wants to perform that action. If the system is already running, the user can force stop the system. This component harkens back to Thomas Sheridan’s concept of “supervisory control”. The user can see if the system is currently running and make a decision about what to do from there. As you will see from the later components, this system is a “strict system” which means that the program functions with parameters set by the human (Sheridan, 2002).
 
 The force stop could be considered a level of system safety which allows the user to stop a process midstream.
 
 ### Current Settings
-This component shows that it is a “strict system”. The user sets certain parameters and allows the system to run on its own. With a system like this, lessons from John D. Lee’s paper on trust have been used. In this paper, trust appropriateness and trust resolution are explained to be essential when it comes to understanding automation capabilities and human-automation relationships. Therefore, automation should be designed for appropriate trust and the purpose and capabilities of said automation should be clear to operators.
+This component shows that it is a “strict system”. The user sets certain parameters and allows the system to run on its own. With a system like this, lessons from John D. Lee’s paper on trust have been used. In this paper, trust appropriateness and trust resolution are explained to be essential when it comes to understanding automation capabilities and human-automation relationships. Therefore, automation should be designed for appropriate trust and the purpose and capabilities of said automation should be clear to operators (Lee, 2004).
 
 This component integrates with other components which show how changes here impact the performance of the system. For example, if the temperature is changed from the AND column to the OR column, the current status will change. The terms used in this component are also defined in a drop down menu to help clarify and promote trust on the user’s part. However, due to the highly autonomous nature of the software, i.e. the system will run continuously once the settings are in place, the user can become complacent and trust the system too much by never looking at the recent run logs or the weather reports that it is running. The gardener might be surprised that his thresholds were not what he actually needed and killed his plant or lawn.
 
@@ -159,10 +159,21 @@ This component allows the user to set the threshold that the automation pipeline
 ![enter image description here](https://lh3.googleusercontent.com/0zjXXs2bh__cjCS6jciZC4KajcstVZZST0AGd4MwWkixEDksGMorGUrjUfdmdTqPFI7rAolrvUs7 "Weather")
 
 ### Current Status
-This component allows the user to see what the current levels of the system are and make judgments about what to do from there. The green “System will run on the next trigger” indicator uses Joachim Meyer concept of binary indicators to alert the user of what will happen on the next trigger.
+This component allows the user to see what the current levels of the system are and make judgments about what to do from there. The green “System will run on the next trigger” indicator uses Joachim Meyer concept of binary indicators to alert the user of what will happen on the next trigger (Meyer, 2001).
 
 ![enter image description here](https://lh3.googleusercontent.com/ONSRJJPKA7vsDkAtSBuk9ZBmr76wexFsmfmFq8UrAUXSHEKYRpoxK-lt_A76m70LYw6SUfxr4ZMv "Current Status")
 
 ### Recent Updates
-This system monitoring component uses Hollnagel’s Safety II approach. In this approach the evaluators try to ensure that as few things go right as possible by making a list of what went right. This log component keep track as all sensor, weather, and system status information so that operators can see how the system was performing at a certain time and cross check that with how it should be. This means the operator focuses on what is right rather than what went wrong is with the system. From here the operator can see what each threshold level was and decide from there as to whether it ran improperly or not.
+This system monitoring component uses Hollnagel’s Safety II approach. In this approach the evaluators try to ensure that as few things go right as possible by making a list of what went right. This log component keep track as all sensor, weather, and system status information so that operators can see how the system was performing at a certain time and cross check that with how it should be. This means the operator focuses on what is right rather than what went wrong is with the system. From here the operator can see what each threshold level was and decide from there as to whether it ran improperly or not (Hollnagel, 2012).
 ![enter image description here](https://lh3.googleusercontent.com/oN6RjdSuuQ9Y7aFpyseqDs2K5UmcljZcnWMXZHTjMcipLSEpWOs5hisX5iXOXNrrCHS5oTaGJ49l "Recent Updates")
+
+
+# Citations
+Hollnagel, Erik. 2012. A Tale of Two Safeties. http://erikhollnagel.com/A%20Tale%20of%20Two%20Safeties.pdf
+
+Lee, John D., See, Katrina A., Spring 2004, Trust in Automation: Designing for Appropriate Reliance. https://user.engineering.uiowa.edu/~csl/publications/pdf/leesee04.pdf
+
+Meyer, Joachim. January 1, 2001. Effects of Warning Validity and Proximity on Responses to Warnings. http://hfs.sagepub.com/content/43/4/563.
+
+(Sheridan, 2002)
+Sheridan, Thomas. July 11, 2002. Humans and Automation Chapter 6: Supervisory Control.
